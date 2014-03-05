@@ -1369,6 +1369,7 @@ void prob_bcsft(double rf, int s, int t, double *transpr)
   /* D->x: PfDx using calculations from proc_ft, but need to multiple by PbD = BCs probability */
   /* PbDfx = PbD * PfDx (PfDx = probability of D->x in Ft) */
 
+  warning("This is BCsFt code modified by RFM and SKT; this is in development, and should not be used for general purposes");
   if(s == 0) {
     prob_ft(rf, t, transpr);
     return;

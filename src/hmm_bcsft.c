@@ -1018,7 +1018,7 @@ void est_rf_bcsft(int *n_ind, int *n_mar, int *geno, double *rf,
   int i, j1, j2, **Geno, n_mei=0, flag=0;
   double **Rf, next_rf=0.0;
   int cross_scheme[2];
-
+  warning("This is BCsFt code modified by RFM and SKT; this is in development, and should not be used for general purposes");
   /* cross_scheme is hidden in rf */
   cross_scheme[0] = rf[0];
   cross_scheme[1] = rf[1];
@@ -1369,7 +1369,7 @@ void prob_bcsft(double rf, int s, int t, double *transpr)
   /* D->x: PfDx using calculations from proc_ft, but need to multiple by PbD = BCs probability */
   /* PbDfx = PbD * PfDx (PfDx = probability of D->x in Ft) */
 
-  warning("This is BCsFt code modified by RFM and SKT; this is in development, and should not be used for general purposes");
+
   if(s == 0) {
     prob_ft(rf, t, transpr);
     return;

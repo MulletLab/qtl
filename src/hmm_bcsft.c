@@ -1306,6 +1306,7 @@ void prob_ft(double rf, int t, double *transpr)
   int k;
   double t1,t2,t1m2,w,w2,r2,rw;
   double beta,gamma,beta1,sbeta1,sgamma1,SDt,SEt,sbetaBA,gamma1,beta2m1;
+  float H; /* Added by RFM */
   /* compute transition probabilities to leave double het states */
   t1 = t - 1.0;
   t2 = R_pow(2.0, t); /* 2^t */
@@ -1314,6 +1315,8 @@ void prob_ft(double rf, int t, double *transpr)
   w2 = w * w;
   r2 = rf * rf;
   rw = w * rf;
+  H = 0.5; /* Added by RFM */
+  H1 = ((1 - H) / 2);
 
   for(k=0; k<10; k++)
     transpr[k] = 0.0;
@@ -1339,8 +1342,9 @@ void prob_ft(double rf, int t, double *transpr)
   /* transpr[1] = (2.0 * rw / t2) * ((1.0 - R_pow(w2pr2, t1)) / (1 - w2pr2)); */
 
   double s2beta1,sbeta2,s2beta2;
-  s2beta1 = (t1m2 - beta1) / beta2m1;                   /* sum from 1 to t-1 of of (2*beta)^(k-1). */
-  transpr[1] = rw * s2beta1;                            /* PfB1 = PfDB */
+  s2beta1 = (t1m2 - beta1) / beta2m1;     /* sum from 1 to t-1 of of (2*beta)^(k-1). */
+  //transpr[1] = rw * s2beta1;
+  transpr[1] = (H * H1) * (rw * s2beta1);                            /* PfB1 = PfDB */
   transpr[6] = transpr[1];                              /* PfB0 = PfB1 */
 
   /* sbetaBA = sum beta1[k] * rw/2 * prob(B->A in remaining steps) */
@@ -1349,12 +1353,16 @@ void prob_ft(double rf, int t, double *transpr)
   s2beta2 = (2.0 * t1m2 - (beta1 / beta)) / beta2m1;        /* sum of (2*beta)^(k-1) from 1 to t-2 */
   sbetaBA = 0.5 * rw * (sbeta2 - s2beta2);
 
-  transpr[0] = SDt * w2 + SEt * r2 + sbetaBA;           /* PfA1 = PfDA + PfDEA + PfDBA */
+  //transpr[0] = SDt * w2 + SEt * r2 + sbetaBA;           /* PfA1 = PfDA + PfDEA + PfDBA */
+  transpr[0] = (H1 * H1) * (SDt * w2 + SEt * r2 + sbetaBA);
   transpr[5] = transpr[0];                              /* PfA0 = PfA1 */
 
-  transpr[2] = SDt * r2 + SEt * w2 + sbetaBA;           /* PfbC = PfDC + PfDEC + PfDBC */
-  transpr[3] = (beta1 + gamma1) / 2.0;                  /* PfD = PfDD */
-  transpr[4] = (beta1 - gamma1) / 2.0;                  /* PfE = PfDE */
+  //transpr[2] = SDt * r2 + SEt * w2 + sbetaBA;
+  transpr[2] = (H1 * H1) * (SDt * r2 + SEt * w2 + sbetaBA);           /* PfbC = PfDC + PfDEC + PfDBC */
+  //transpr[3] = (beta1 + gamma1) / 2.0;                  /* PfD = PfDD */
+  //transpr[4] = (beta1 - gamma1) / 2.0;                  /* PfE = PfDE */
+  transpr[3] = (H * H) * (beta1 + gamma1) / 2.0; 
+  transpr[4] = (H * H) * (beta1 - gamma1) / 2.0;
 
   /* marginal probabilities for one marker */
   transpr[8] = -t1 * M_LN2;                             /* Aa */

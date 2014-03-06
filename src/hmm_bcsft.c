@@ -1306,7 +1306,7 @@ void prob_ft(double rf, int t, double *transpr)
   int k;
   double t1,t2,t1m2,w,w2,r2,rw;
   double beta,gamma,beta1,sbeta1,sgamma1,SDt,SEt,sbetaBA,gamma1,beta2m1;
-  float H; /* Added by RFM */
+  float H,H1; /* Added by RFM */
   /* compute transition probabilities to leave double het states */
   t1 = t - 1.0;
   t2 = R_pow(2.0, t); /* 2^t */

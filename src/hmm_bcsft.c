@@ -1315,7 +1315,7 @@ void prob_ft(double rf, int t, double *transpr)
   w2 = w * w;
   r2 = rf * rf;
   rw = w * rf;
-  H = 0.80; /* Added by RFM */
+  H = 0.50; /* Added by RFM */
   H1 = ((1 - H) / 2);
 
   for(k=0; k<10; k++)

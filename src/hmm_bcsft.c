@@ -1721,11 +1721,11 @@ void prob_bcsft_exHet(double rf, int s, int t, double *transpr, double *het)
 
   if(t == 0) {
     prob_bcs(rf, s, transpr);
-    error("The exHet code is experimental and won't take backcrosses.")
+    error("The exHet code is experimental and won't take backcrosses.");
     return;
   }
    
-  error("The exHet code is experimental and won't take backcrosses.")
+  error("The exHet code is experimental and won't take backcrosses.");
   /* could silently pass transft via transpr with some care */
   double transbcs[10],transft[10];
   prob_bcs(rf, s, transbcs);

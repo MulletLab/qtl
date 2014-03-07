@@ -1018,6 +1018,126 @@ void est_rf_bcsft(int *n_ind, int *n_mar, int *geno, double *rf,
   int i, j1, j2, **Geno, n_mei=0, flag=0;
   double **Rf, next_rf=0.0;
   int cross_scheme[2];
+  /* cross_scheme is hidden in rf */
+  cross_scheme[0] = rf[0];
+  cross_scheme[1] = rf[1];
+  rf[0] = 0.0;
+  rf[1] = 0.0;
+
+  int meioses_per;
+  meioses_per = 2 * cross_scheme[1];
+  if(cross_scheme[0] <= 0)
+    meioses_per -= 2;
+  if(cross_scheme[0] > 0) 
+    meioses_per += cross_scheme[0];
+
+  /* reorganize geno and rf */
+  reorg_geno(*n_ind, *n_mar, geno, &Geno);
+  reorg_errlod(*n_mar, *n_mar, rf, &Rf);
+
+  int obs1,obs2,n_gen,tmp1;
+  double countmat[15];
+  double temp,logprecval;
+
+  n_gen = 2;
+  if(cross_scheme[1] > 0)
+    n_gen = 5;
+
+  for(j1=0; j1<*n_mar; j1++) {
+
+    /* count number of meioses */
+    for(i=0, n_mei=0; i<*n_ind; i++) 
+      if(Geno[j1][i] != 0) n_mei += meioses_per;
+    Rf[j1][j1] = (double) n_mei;
+    
+    R_CheckUserInterrupt(); /* check for ^C */
+
+    for(j2=j1+1; j2<*n_mar; j2++) {
+      for(obs2=1; obs2<=n_gen; obs2++) {
+	tmp1 = ((obs2 * (obs2 - 1)) / 2) - 1;
+	for(obs1=1; obs1<=obs2; obs1++) {
+	  countmat[obs1 + tmp1] = 0.0;
+	}
+      }
+      /* count meioses */
+      n_mei = flag = 0;
+      for(i=0; i<*n_ind; i++) {
+	if(Geno[j1][i] != 0 && Geno[j2][i] != 0) {
+	
+	  /* make obs1 <= obs2 */
+	  obs1 = Geno[j1][i];
+	  obs2 = Geno[j2][i];
+	  if(obs1 > obs2) {
+	    tmp1 = obs2;
+	    obs2 = obs1;
+	    obs1 = tmp1;
+	  }
+	  tmp1 = ((obs2 * (obs2 - 1)) / 2) - 1;
+	  /* increment count by one */
+	  countmat[obs1 + tmp1] += 1.0;
+	  flag++;
+	}
+      }
+
+      /* check if marker pair is informative */
+      for(obs2=1; obs2<=n_gen; obs2++) {
+	tmp1 = ((obs2 * (obs2 - 1)) / 2) - 1;
+	for(obs1=1; obs1<=obs2; obs1++) {
+	  temp = countmat[obs1 + tmp1];
+	  if(temp > 0.0) {
+	    logprecval = logprec_bcsft(obs1, obs2, 0.5, cross_scheme) -
+	      logprec_bcsft(obs1, obs2, TOL, cross_scheme);
+	    if(fabs(logprecval) > TOL) {
+	      n_mei += (int) temp;
+	      flag = 1;
+	    }
+	  }
+	}
+      }
+      
+      if(n_mei != 0 && flag == 1) {
+	n_mei *= meioses_per;
+	flag = 1;
+
+	/* use golden section search of log likelihood instead of EM */
+	next_rf = golden_search(countmat, n_gen, *maxit, *tol, cross_scheme,
+				 comploglik_bcsft);
+
+	if(next_rf < 0.0) {
+	  flag = 0;
+	  next_rf = - next_rf;
+	}
+	if(!flag) warning("Markers (%d,%d) didn't converge\n", j1+1, j2+1);
+
+	/* calculate LOD score */
+	Rf[j1][j2] = next_rf;
+	logprecval = 0.0;
+
+	for(obs2=1; obs2<=n_gen; obs2++) {
+	  tmp1 = ((obs2 * (obs2 - 1)) / 2) - 1;
+	  for(obs1=1; obs1<=obs2; obs1++) {
+	    temp = countmat[obs1 + tmp1];
+	    if(temp > 0.0)
+	      logprecval += temp * (logprec_bcsft(obs1,obs2, next_rf, cross_scheme) -
+				    logprec_bcsft(obs1,obs2, 0.5, cross_scheme));
+	  }
+	}
+	Rf[j2][j1] = logprecval / log(10.0);
+      }
+      else { /* no informative meioses */
+	Rf[j1][j2] = NA_REAL;
+	Rf[j2][j1] = 0.0;
+      }
+    } /* end loops over markers */
+  }
+}
+
+void est_rf_bcsft_exHet(int *n_ind, int *n_mar, int *geno, double *rf, 
+		  int *maxit, double *tol)
+{
+  int i, j1, j2, **Geno, n_mei=0, flag=0;
+  double **Rf, next_rf=0.0;
+  int cross_scheme[2];
   warning("This is BCsFt code modified by RFM and SKT; this is in development, and should not be used for general purposes");
   /* cross_scheme is hidden in rf */
   cross_scheme[0] = rf[0];
@@ -1301,7 +1421,71 @@ void prob_bcs(double rf, int s, double *transpr)
     transpr[7] = log1p(-exp(transpr[8])); /* AA */
   }
 }
+
 void prob_ft(double rf, int t, double *transpr)
+{
+  int k;
+  double t1,t2,t1m2,w,w2,r2,rw;
+  double beta,gamma,beta1,sbeta1,sgamma1,SDt,SEt,sbetaBA,gamma1,beta2m1;
+  /* compute transition probabilities to leave double het states */
+  t1 = t - 1.0;
+  t2 = R_pow(2.0, t); /* 2^t */
+  t1m2 = 2.0 / t2;
+  w = 1.0 - rf;
+  w2 = w * w;
+  r2 = rf * rf;
+  rw = w * rf;
+
+  for(k=0; k<10; k++)
+    transpr[k] = 0.0;
+
+  /* A = prob go from AB.ab to AB.AB at step t */
+  /* D1 -> Dk or Ek -> Ak+1 -> At OR D1 -> Dk or Ek -> Bk+1 -> Ak+s -> At */
+  beta = (w2 + r2) / 2.0; 
+  gamma = (w2 - r2) / 2.0; 
+  beta1 = R_pow(beta, t1);
+  gamma1 = R_pow((w2 - r2) / 2.0, t1);
+  /* beta1 = prob still in D or E at step t */
+  /* sbeta1 = sum of beta1[k] from 1 to t-1 */
+  /* Dt and Et depend on sbeta1 and sgamma1 */
+  sbeta1 = (1.0 - beta1) / (1.0 - beta);
+  sgamma1 = (1.0 - R_pow(gamma, t1)) / (1.0 - gamma);
+  SDt = (sbeta1 + sgamma1) / 8.0;
+  SEt = (sbeta1 - sgamma1) / 8.0;
+  beta2m1 = 1.0 - 2.0 * beta;
+
+  /* old code--make sure new code works first */
+  /* w2pr2 = (w2 + r2); */
+  /* sbetaBA = (rw / 2.0) * (sbeta1 - 2.0 * ((2.0 / t2) - beta1) / (1.0 - 2.0 * beta)); */
+  /* transpr[1] = (2.0 * rw / t2) * ((1.0 - R_pow(w2pr2, t1)) / (1 - w2pr2)); */
+
+  double s2beta1,sbeta2,s2beta2;
+  s2beta1 = (t1m2 - beta1) / beta2m1;     /* sum from 1 to t-1 of of (2*beta)^(k-1). */
+  transpr[1] = rw * s2beta1;                           /* PfB1 = PfDB */
+  transpr[6] = transpr[1];                              /* PfB0 = PfB1 */
+
+  /* sbetaBA = sum beta1[k] * rw/2 * prob(B->A in remaining steps) */
+  sbeta2 = 0.0;
+  if(t > 2.0) sbeta2 = (1.0 - beta1 / beta) / (1.0 - beta); /* sum of beta^(k-1) from 1 to (t-1) */
+  s2beta2 = (2.0 * t1m2 - (beta1 / beta)) / beta2m1;        /* sum of (2*beta)^(k-1) from 1 to t-2 */
+  sbetaBA = 0.5 * rw * (sbeta2 - s2beta2);
+
+  transpr[0] = SDt * w2 + SEt * r2 + sbetaBA;           /* PfA1 = PfDA + PfDEA + PfDBA */
+  transpr[5] = transpr[0];                              /* PfA0 = PfA1 */
+
+  transpr[2] = SDt * r2 + SEt * w2 + sbetaBA;           /* PfbC = PfDC + PfDEC + PfDBC */
+  transpr[3] = (beta1 + gamma1) / 2.0;                  /* PfD = PfDD */
+  transpr[4] = (beta1 - gamma1) / 2.0;                  /* PfE = PfDE */
+
+  /* marginal probabilities for one marker */
+  transpr[8] = -t1 * M_LN2;                             /* Aa */
+  transpr[7] = log1p(-exp(transpr[8])) - M_LN2;         /* AA */
+  transpr[9] = transpr[7];                              /* aa */
+
+  return;
+}
+
+void prob_ft_exHet(double rf, int t, double *transpr)
 {
   int k;
   double t1,t2,t1m2,w,w2,r2,rw;
@@ -1371,6 +1555,7 @@ void prob_ft(double rf, int t, double *transpr)
 
   return;
 }
+
 void prob_bcsft(double rf, int s, int t, double *transpr)
 { 
   /* BCsFt probabilities */

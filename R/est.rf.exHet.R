@@ -31,8 +31,11 @@
 ######################################################################
 
 est.rf.exHet <-
-function(cross, maxit=10000, tol=1e-6) 
+function(cross, maxit=10000, tol=1e-6, het=0.5) 
 {
+  print("This code is in development by RFM and SKT, and should not be used for general purposes")
+  warning("This code is in development by RFM and SKT, and should not be used for general purposes")
+
   if(!any(class(cross) == "cross"))
     stop("Input should have class \"cross\".")
 
@@ -109,6 +112,7 @@ function(cross, maxit=10000, tol=1e-6)
             rf = as.double(temp),
             as.integer(maxit),
             as.double(tol),
+	    as.double(het),
             PACKAGE="qtl")
   }
 

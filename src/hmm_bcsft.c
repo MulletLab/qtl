@@ -396,6 +396,7 @@ double assign_bcsftd(int n_gen, int obs1, int obs2, double *transval)
   if(n_gen == 5) return(assign_bcsftc(obs1, obs2, transval));
   return(assign_bcsftb(obs1, obs2, transval));
 }
+
 double comploglik_bcsft(double rf, int n_gen, double *countmat, int *cross_scheme)
 {
   static double transpr[10];
@@ -414,6 +415,48 @@ double comploglik_bcsft(double rf, int n_gen, double *countmat, int *cross_schem
 
     /* compute probabilities */
     prob_bcsft(rf, s, t, transpr);
+    transpr[3] += transpr[4];
+
+    for(obs2=1; obs2<=n_gen; obs2++) {
+      tmp1 = ((obs2 * (obs2 - 1)) / 2) - 1;
+      for(obs1=1; obs1<=obs2; obs1++)
+	probmat[obs1 + tmp1] = assign_bcsftd(n_gen, obs1, obs2, transpr);
+    }
+  }
+
+  double lod,temp;
+ 
+  /* compute log likelihood */
+  lod = 0.0;
+  for(obs2=1; obs2<=n_gen; obs2++) {
+    tmp1 = ((obs2 * (obs2 - 1)) / 2) - 1;
+    for(obs1=1; obs1<=obs2; obs1++) {
+      temp = countmat[obs1 + tmp1];
+      if(temp > 0.0)
+	lod += temp * log(probmat[obs1 + tmp1]);
+    }
+  }
+  return(lod);
+}
+
+double comploglik_bcsft_exHet(double rf, int n_gen, double *countmat, int *cross_scheme, double *het)
+{
+  static double transpr[10];
+  static double probmat[15];
+  static double oldrf = -1.0;
+  static int s = -1;
+  static int t = -1;
+  int obs1,obs2,tmp1;
+
+  if(s != cross_scheme[0] || t != cross_scheme[1] || fabs(rf - oldrf) > TOL) {
+    s = cross_scheme[0];
+    t = cross_scheme[1];
+
+    oldrf = rf;
+    if(rf < TOL) rf = TOL;
+
+    /* compute probabilities */
+    prob_bcsft_exHet(rf, s, t, transpr, het);  /*  TODO: Here's where the magic happens. */
     transpr[3] += transpr[4];
 
     for(obs2=1; obs2<=n_gen; obs2++) {
@@ -991,6 +1034,60 @@ double logprec_bcsft(int obs1, int obs2, double rf, int *cross_scheme)
   return(log((out1 + out2 + out3 + out4) / denom));
 }
 
+double logprec_bcsft_exHet(int obs1, int obs2, double rf, int *cross_scheme, *het)
+{
+  /* this routine is not correct yet */
+  if((obs1 == 0) || (obs2 == 0)) return(log(-1.0)); /* shouldn't get here */
+
+  static double transpr[10],margin[4];
+  static double oldrf = -1.0;
+  static int s = -1;
+  static int t = -1;
+  
+  if(s != cross_scheme[0] || t != cross_scheme[1] || fabs(rf - oldrf) > TOL) {
+    s = cross_scheme[0];
+    t = cross_scheme[1];
+
+    oldrf = rf;
+    if(rf < TOL) rf = TOL;
+
+    prob_bcsft_exHet(rf, s, t, transpr, het);   /* TODO: This is where the transition probabilities are calculated and the magic happens. */
+    transpr[3] += transpr[4];
+
+    int k;
+    for(k=1; k<4; k++)
+      margin[k] = exp(transpr[6+k]);
+  }
+
+  double out1,out2,out3,out4;
+
+  if(obs1 < 4) {
+    if(obs2 < 4) /* known genotypes for both loci */
+      return(log(assign_bcsft(obs1, obs2, transpr) / margin[obs1]));
+    /* dominant genotype for locus 2 */
+    out1 = assign_bcsft(obs1, obs2 - 3, transpr);
+    out2 = assign_bcsft(obs1, obs2 - 2, transpr);
+    return(log((out1 + out2) / margin[obs1]));
+  }
+
+  /* obs1 is 4 or 5 */
+  double denom;
+  denom =  margin[obs1 - 3] + margin[obs1 - 2];
+
+  if(obs2 < 4) {
+    /* dominant genotype for locus 1 */
+    out1 = assign_bcsft(obs1 - 3, obs2, transpr);
+    out2 = assign_bcsft(obs1 - 2, obs2, transpr);
+    return(log((out1 + out2) / denom));
+  }
+  /* both loci have dominant genotypes */
+  out1 = assign_bcsft(obs1 - 3, obs2 - 3, transpr);
+  out2 = assign_bcsft(obs1 - 2, obs2 - 2, transpr);
+  out3 = assign_bcsft(obs1 - 3, obs2 - 2, transpr);
+  out4 = assign_bcsft(obs1 - 2, obs2 - 3, transpr);
+  return(log((out1 + out2 + out3 + out4) / denom));
+}
+
 /* est_rfo_bcsft is ok for bc,f2, not for advanced crosses */
 /* naive estimate based on number of recombinations in nrec2 does not generalize */
 /* now use est_rf_bcsft with golden section search */
@@ -1135,6 +1232,12 @@ void est_rf_bcsft(int *n_ind, int *n_mar, int *geno, double *rf,
 void est_rf_bcsft_exHet(int *n_ind, int *n_mar, int *geno, double *rf, 
 		  int *maxit, double *tol, double *het)
 {
+	/* TODO: Ultimately, it's the prob_ft() function within the prob_bcsft() function that needs to be modified.
+	 * prob_bcsft() is called by comploglik_bcsft(), which itself is passed to the golden_search() function.
+	 * prob_bcsft() is also called by logprec_bcsft().
+	 * an exHet form of comploglik_bcsft(), logprec_bcsft(), prob_bcsft(), and prob_ft() functions will need to be made
+	 * that pass the het term. */
+
   int i, j1, j2, **Geno, n_mei=0, flag=0;
   double **Rf, next_rf=0.0;
   int cross_scheme[2];
@@ -1208,8 +1311,8 @@ void est_rf_bcsft_exHet(int *n_ind, int *n_mar, int *geno, double *rf,
 	for(obs1=1; obs1<=obs2; obs1++) {
 	  temp = countmat[obs1 + tmp1];
 	  if(temp > 0.0) {
-	    logprecval = logprec_bcsft(obs1, obs2, 0.5, cross_scheme) -
-	      logprec_bcsft(obs1, obs2, TOL, cross_scheme);
+	    logprecval = logprec_bcsft_exHet(obs1, obs2, 0.5, cross_scheme, het) -   //TODO: Add exHet function here.
+	      logprec_bcsft_exHet(obs1, obs2, TOL, cross_scheme, het);   //TODO: Add exHet function here.
 	    if(fabs(logprecval) > TOL) {
 	      n_mei += (int) temp;
 	      flag = 1;
@@ -1223,8 +1326,8 @@ void est_rf_bcsft_exHet(int *n_ind, int *n_mar, int *geno, double *rf,
 	flag = 1;
 
 	/* use golden section search of log likelihood instead of EM */
-	next_rf = golden_search(countmat, n_gen, *maxit, *tol, cross_scheme,
-				 comploglik_bcsft);
+	next_rf = golden_search_exHet(countmat, n_gen, *maxit, *tol, cross_scheme,
+				 comploglik_bcsft_exHet, het);   //TODO: Add exHet function here.
 
 	if(next_rf < 0.0) {
 	  flag = 0;
@@ -1241,8 +1344,8 @@ void est_rf_bcsft_exHet(int *n_ind, int *n_mar, int *geno, double *rf,
 	  for(obs1=1; obs1<=obs2; obs1++) {
 	    temp = countmat[obs1 + tmp1];
 	    if(temp > 0.0)
-	      logprecval += temp * (logprec_bcsft(obs1,obs2, next_rf, cross_scheme) -
-				    logprec_bcsft(obs1,obs2, 0.5, cross_scheme));
+	      logprecval += temp * (logprec_bcsft_exHet(obs1,obs2, next_rf, cross_scheme, het) -   //TODO:Add exHet function here.
+				    logprec_bcsft_exHet(obs1,obs2, 0.5, cross_scheme, het));   ///TODO: Add exHet function here.
 	  }
 	}
 	Rf[j2][j1] = logprecval / log(10.0);
@@ -1487,7 +1590,7 @@ void prob_ft(double rf, int t, double *transpr)
   return;
 }
 
-void prob_ft_exHet(double rf, int t, double *transpr)
+void prob_ft_exHet(double rf, int t, double *transpr, double *het)
 {
   int k;
   double t1,t2,t1m2,w,w2,r2,rw;
@@ -1604,6 +1707,55 @@ void prob_bcsft(double rf, int s, int t, double *transpr)
 
   return;
 }
+
+void prob_bcsft_exHet(double rf, int s, int t, double *transpr, double *het)
+{ 
+  /* BCsFt probabilities */
+  /* D->x: PfDx using calculations from proc_ft, but need to multiple by PbD = BCs probability */
+  /* PbDfx = PbD * PfDx (PfDx = probability of D->x in Ft) */
+
+  if(s == 0) {
+    prob_ft_exHet(rf, t, transpr, het);
+    return;
+  }
+
+  if(t == 0) {
+    prob_bcs(rf, s, transpr);
+    error("The exHet code is experimental and won't take backcrosses.")
+    return;
+  }
+   
+  error("The exHet code is experimental and won't take backcrosses.")
+  /* could silently pass transft via transpr with some care */
+  double transbcs[10],transft[10];
+  prob_bcs(rf, s, transbcs);
+  prob_ft(rf, t+1, transft);
+
+  double tm2,PbBfC;
+  tm2 = R_pow(0.5, (double) t);
+  PbBfC = transbcs[1] * 0.5 * (1.0 - tm2); /* PbBfC = PbB * sum from k=0 to t-1 (1/2)^k * (1/4) */
+
+  transpr[5] = transbcs[3] * transft[0];               /* PbfA0 = PbD * PfDA1 */
+  transpr[0] = transpr[5] + 2.0 * PbBfC + transbcs[0]; /* PbfA1 = PfA0 + 2 * PbBfC + PbA1 * 1 */
+
+  transpr[6] = transbcs[3] * transft[1];               /* PbfB0 = PbD * PfDB1 */
+  transpr[1] = transpr[6] + transbcs[1] * tm2;         /* PbfB1 = PfB0 + PbB * (1/2)^t */
+
+  transpr[2] = transbcs[3] * transft[2] + PbBfC;       /* PbfC = PbD * PfDC + PbBfC */
+  transpr[3] = transbcs[3] * transft[3];               /* PbfD = PbD * PfDD */
+  transpr[4] = transbcs[3] * transft[4];               /* PbfE = PbD * PfDE */
+
+  /* marginal probabilities for one marker */
+  double s2,t2;
+  s2 = -s * M_LN2;
+  t2 = -t * M_LN2;
+  transpr[8] = s2 + t2;                                /* Aa: log(2^-(s+t)) */
+  transpr[9] = s2 + log1p(-exp(t2)) - M_LN2;           /* aa: log(2^-(s+1) * (1-2^-t)) */
+  transpr[7] = addlog(log1p(-exp(s2)), transpr[9]);    /* AA: log(1-2^-s + 2^-(s+1) * (1-2^-t)) */
+
+  return;
+}
+
 /*######################################################################################### */
 double kptothek(double t, double p, double ptothet)
 {

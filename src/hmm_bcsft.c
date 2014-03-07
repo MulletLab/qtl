@@ -1140,7 +1140,8 @@ void est_rf_bcsft_exHet(int *n_ind, int *n_mar, int *geno, double *rf,
   int cross_scheme[2];
   double hetVal = *het;
   warning("This is BCsFt code modified by RFM and SKT; this is in development, and should not be used for general purposes");
-  warning("Using a heterozygosity value of %f", hetVal);
+  warning("Moved to hetVal: Using a heterozygosity value of %f", hetVal);
+  warning("Dereferencing pointer: Using a heterozygosity value of %f", *het);
 
   /* cross_scheme is hidden in rf */
   cross_scheme[0] = rf[0];

@@ -104,7 +104,8 @@ function(cross, maxit=10000, tol=1e-6, het=0.5)
     temp <- as.double(rep(0,n.mar*n.mar))
     if(type == "bcsft")
       temp[1:2] <- cross.scheme
-    print("Passing het as:", het, ".") 
+    print("Passing het as:")
+    print(het) 
     z <- .C(cfunc,
             as.integer(n.ind),         # number of individuals
             as.integer(n.mar),         # number of markers

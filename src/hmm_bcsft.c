@@ -1596,7 +1596,7 @@ void prob_ft_exHet(double rf, int t, double *transpr, double *het)
   double t1,t2,t1m2,w,w2,r2,rw;
   double beta,gamma,beta1,sbeta1,sgamma1,SDt,SEt,sbetaBA,gamma1,beta2m1;
   float H,H1; /* Added by RFM */
-  warning("Within prob_ft_exHet using het value of %d", *het);
+  warning("Within prob_ft_exHet using het value of %f", *het);
   /* compute transition probabilities to leave double het states */
   t1 = t - 1.0;
   t2 = R_pow(2.0, t); /* 2^t */

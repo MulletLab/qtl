@@ -1034,7 +1034,7 @@ double logprec_bcsft(int obs1, int obs2, double rf, int *cross_scheme)
   return(log((out1 + out2 + out3 + out4) / denom));
 }
 
-double logprec_bcsft_exHet(int obs1, int obs2, double rf, int *cross_scheme, *het)
+double logprec_bcsft_exHet(int obs1, int obs2, double rf, int *cross_scheme, double *het)
 {
   /* this routine is not correct yet */
   if((obs1 == 0) || (obs2 == 0)) return(log(-1.0)); /* shouldn't get here */

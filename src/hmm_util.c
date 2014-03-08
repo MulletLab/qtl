@@ -263,7 +263,7 @@ double golden_search_exHet(double *countmat, int n_gen, int maxit, double tol, i
   }
   
   x[1] = x[0] + resphi * (x[2] - x[0]);
-  y[1] = comploglik(x[1], n_gen, countmat, cross_scheme);
+  y[1] = comploglik(x[1], n_gen, countmat, cross_scheme, het);
 
   /* x0 and x2 are the current bounds; the minimum is between them.
    * x1 is the center point, which is closer to x0 than to x2. */
@@ -276,7 +276,7 @@ double golden_search_exHet(double *countmat, int n_gen, int maxit, double tol, i
     if(fabs(x[2] - x[0]) < tol)
       break;
  
-    y[3] = comploglik(x[3], n_gen, countmat, cross_scheme);
+    y[3] = comploglik(x[3], n_gen, countmat, cross_scheme, het);
 
     if(y[3] >= y[1]) {
       x[0] = x[1];

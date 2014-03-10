@@ -50,6 +50,21 @@ void init_stepf(double *rf, double *rf2, int n_gen, int n_mar, int *cross_scheme
   }
 }
 
+void init_stepf_exHet(double *rf, double *rf2, int n_gen, int n_mar, int *cross_scheme, 
+		double stepf(int, int, double, double, int *, double *),
+		double **probmat, double *het)
+{
+  int j,obs1,obs2,tmp1;
+  
+  for(j=0; j<n_mar; j++) {
+    for(obs2=1; obs2<=n_gen; obs2++) {
+      tmp1 = ((obs2 * (obs2 - 1)) / 2) - 1;
+      for(obs1=1; obs1<=obs2; obs1++)
+	probmat[j][obs1 + tmp1] = stepf(obs1, obs2, rf[j], rf2[j], cross_scheme, het);
+    }
+  }
+}
+
 double stepfc(int obs1, int obs2, int mar, double **probmat)
 {
   int tmp1;

@@ -29,6 +29,9 @@
 void init_stepf(double *rf, double *rf2, int n_gen, int n_mar, int *cross_scheme, 
 		double stepf(int, int, double, double, int *),
 		double **probmat);
+void init_stepf_exHet(double *rf, double *rf2, int n_gen, int n_mar, int *cross_scheme, 
+		double stepf(int, int, double, double, int *, double *),
+		double **probmat, double *het);
 
 double stepfc(int obs1, int obs2, int mar, double **probmat);
 

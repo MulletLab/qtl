@@ -247,6 +247,44 @@ double step_bcsft(int gen1, int gen2, double rf, double junk, int *cross_scheme)
     }
   }
 
+double step_bcsft_exHet(int gen1, int gen2, double rf, double junk, int *cross_scheme, double *het) 
+{
+  static double transpr[10];
+  static double oldrf = -1.0;
+  static int s = -1;
+  static int t = -1;
+  
+  if(s != cross_scheme[0] || t != cross_scheme[1] || fabs(rf - oldrf) > TOL) {
+    s = cross_scheme[0];
+    t = cross_scheme[1];
+
+    oldrf = rf;
+    if(rf < TOL) rf = TOL;
+    
+    prob_bcsft_exHet(rf, s, t, transpr, het);
+
+    /* collapse when phase is unknown */
+    if(t > 0) { /* only if Ft in play */
+      transpr[3] += transpr[4]; /* D or E */
+    }
+
+    /* put probabilities on log scale */
+    int k;
+    for(k=0; k<7; k++) {
+      /*      if(transpr[k] > 0.0) */
+      transpr[k] = log(transpr[k]);
+    }
+  }
+
+  double out;
+  /* Find joint probability pr(gen1,gen2). */
+  out = assign_bcsft(gen1, gen2, transpr);
+
+  /* Divide by marginal prob to get pr(gen2|gen1). */
+  out -= transpr[6+gen1];
+
+  return(out);
+}
   double out;
   /* Find joint probability pr(gen1,gen2). */
   out = assign_bcsft(gen1, gen2, transpr);
@@ -332,6 +370,50 @@ double step_bcsftb(int gen1, int gen2, double rf, double junk, int *cross_scheme
     if(rf < TOL) rf = TOL;
 
     prob_bcsft(rf, s, t, transpr);
+
+    /* expand when phase is known */
+    if(t > 0) { /* only if Ft in play */
+      transpr[1] /= 2.0; /* B1 split */
+      transpr[6] /= 2.0; /* B0 split */
+      transpr[3] /= 2.0; /* D split */
+      transpr[4] /= 2.0; /* E split */
+      transpr[8] -= M_LN2; /* log(pr(gen1=2)) = log(pr(gen2=3)) */
+    }
+
+    /* put probabilities on log scale */
+    int k;
+    for(k=0; k<7; k++) {
+      /*      if(transpr[k] > 0.0)  */
+      transpr[k] = log(transpr[k]);
+    }
+  }
+
+  double out;
+  /* Find joint probability pr(gen1,gen2). */
+  out = assign_bcsftb(gen1, gen2, transpr);
+
+  /* Divide by marginal prob to get pr(gen2|gen1). */
+  if(gen1 > 2) gen1--;
+  out -= transpr[6+gen1];
+
+  return(out);
+}
+
+double step_bcsftb_exHet(int gen1, int gen2, double rf, double junk, int *cross_scheme, double *het)
+{
+  static double oldrf = -1.0;
+  static double transpr[10];
+  static int s = -1;
+  static int t = -1;
+  
+  if(s != cross_scheme[0] || t != cross_scheme[1] || fabs(rf - oldrf) > TOL) {
+    s = cross_scheme[0];
+    t = cross_scheme[1];
+
+    oldrf = rf;
+    if(rf < TOL) rf = TOL;
+
+    prob_bcsft_exHet(rf, s, t, transpr, het);
 
     /* expand when phase is known */
     if(t > 0) { /* only if Ft in play */
@@ -879,7 +961,7 @@ void est_map_bcsft_exHet(int *n_ind, int *n_mar, int *geno, double *rf,
       cur_rf[j] = rf[j];
        
     /* initialize step_bcsftb calculations */
-    init_stepf(cur_rf, cur_rf, n_gen, *n_mar, cross_scheme, step_bcsftb, probmat);
+    init_stepf_exHet(cur_rf, cur_rf, n_gen, *n_mar, cross_scheme, step_bcsftb_exHet, probmat, het);
       
     /*** reset counts for countmat ***/
     for(j=0; j<*n_mar-1; j++) {
@@ -970,7 +1052,7 @@ void est_map_bcsft_exHet(int *n_ind, int *n_mar, int *geno, double *rf,
   if(flag) warning("Didn't converge!\n");
 
   /* initialize step_bcsftb calculations */
-  init_stepf(rf, rf, n_gen, *n_mar, cross_scheme, step_bcsftb, probmat);
+  init_stepf_exHet(rf, rf, n_gen, *n_mar, cross_scheme, step_bcsftb_exHet, probmat, het);
 
   /* calculate log likelihood */
   *loglik = 0.0;

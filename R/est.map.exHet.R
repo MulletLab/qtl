@@ -30,9 +30,9 @@
 ######################################################################
 
 est.map.exHet <- 
-function(cross, chr, error.prob=0.0001, map.function=c("haldane","kosambi","c-f","morgan", het=0.50),
+function(cross, chr, error.prob=0.0001, map.function=c("haldane","kosambi","c-f","morgan"),
          m=0, p=0, maxit=10000, tol=1e-6, sex.sp=TRUE, verbose=FALSE,
-         omit.noninformative=TRUE, offset, n.cluster=1)
+         omit.noninformative=TRUE, offset, n.cluster=1, het=0.5)
 {
   print("This is BCsFt code modified by RFM and SKT; this is in development, and should not be used for general purposes")
   print("Using a heterozygosity value of ", het)

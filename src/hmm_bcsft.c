@@ -625,6 +625,7 @@ void est_map_bcsft(int *n_ind, int *n_mar, int *geno, double *rf,
 		   double *error_prob, double *loglik, int *maxit, 
 		   double *tol, int *verbose)
 {
+  warning("This is BCsFt code modified by RFM and SKT, the single function test version; this is in development, and should not be used for general purposes");
   int i, j, v, v2, it, flag=0, **Geno, ndigits,tmp1,tmp2;
   double **alpha, **beta, **gamma, *cur_rf;
   double s, curloglik, maxdif, temp;
@@ -1015,6 +1016,7 @@ void est_rfo_bcsft(int *n_ind, int *n_mar, int *geno, double *rf,
 void est_rf_bcsft(int *n_ind, int *n_mar, int *geno, double *rf, 
 		  int *maxit, double *tol)
 {
+  warning("This is BCsFt code modified by RFM and SKT, the single function test version; this is in development, and should not be used for general purposes");
   int i, j1, j2, **Geno, n_mei=0, flag=0;
   double **Rf, next_rf=0.0;
   int cross_scheme[2];

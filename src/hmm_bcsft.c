@@ -1343,7 +1343,7 @@ void prob_ft(double rf, int t, double *transpr)
 
   double s2beta1,sbeta2,s2beta2;
   s2beta1 = (t1m2 - beta1) / beta2m1;                   /* sum from 1 to t-1 of of (2*beta)^(k-1). */
-  transpr[1] = (H1 * H1) * rw * s2beta1;                            /* PfB1 = PfDB */
+  transpr[1] = (H * H1) * rw * s2beta1;                            /* PfB1 = PfDB */
   transpr[6] = transpr[1];                              /* PfB0 = PfB1 */
 
   /* sbetaBA = sum beta1[k] * rw/2 * prob(B->A in remaining steps) */

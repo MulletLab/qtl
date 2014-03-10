@@ -35,7 +35,8 @@ function(cross, chr, error.prob=0.0001, map.function=c("haldane","kosambi","c-f"
          omit.noninformative=TRUE, offset, n.cluster=1, het=0.5)
 {
   print("This is BCsFt code modified by RFM and SKT; this is in development, and should not be used for general purposes")
-  print("Using a heterozygosity value of ", het)
+  print("Using a heterozygosity value ofL")
+  print(het)
 
   if(!("cross" %in% class(cross)))
     stop("Input should have class \"cross\".")

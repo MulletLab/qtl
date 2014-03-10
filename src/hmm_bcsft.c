@@ -834,6 +834,177 @@ void est_map_bcsft(int *n_ind, int *n_mar, int *geno, double *rf,
 
 }
 
+void est_map_bcsft_exHet(int *n_ind, int *n_mar, int *geno, double *rf, 
+		   double *error_prob, double *loglik, int *maxit, 
+		   double *tol, int *verbose, double *het)
+{
+  int i, j, v, v2, it, flag=0, **Geno, ndigits,tmp1,tmp2;
+  double **alpha, **beta, **gamma, *cur_rf;
+  double s, curloglik, maxdif, temp;
+  char pattern[100], text[200];
+  int cross_scheme[2];
+  double **countmat, **probmat;
+  warning("This is BCsFt code modified by RFM and SKT; this is in development, and should not be used for general purposes");
+  warning("Using a heterozygosity value of %f", *het); 
+  /* cross scheme hidden in loglik argument; used by hmm_bcsft */
+  cross_scheme[0] = (int) ftrunc(*loglik / 1000.0);
+  cross_scheme[1] = ((int) *loglik) - 1000 * cross_scheme[0];
+  *loglik = 0.0;
+  
+  /* n_gen inferred from cross scheme */
+  int n_gen;
+  n_gen = 2;
+  if(cross_scheme[1] > 0) n_gen = 4;
+  
+  /* allocate space for beta and reorganize geno */
+  reorg_geno(*n_ind, *n_mar, geno, &Geno);
+  allocate_alpha(*n_mar, n_gen, &alpha);
+  allocate_alpha(*n_mar, n_gen, &beta);
+  allocate_dmatrix(n_gen, n_gen, &gamma);
+  allocate_double(*n_mar-1, &cur_rf);
+  allocate_dmatrix(*n_mar, 10, &countmat);
+  allocate_dmatrix(*n_mar, 10, &probmat);
+
+  /* digits in verbose output */
+  if(*verbose) {
+    ndigits = (int)ceil(-log10(*tol));
+    if(ndigits > 16) ndigits=16;
+    sprintf(pattern, "%s%d.%df", "%", ndigits+3, ndigits+1);
+  }
+
+  /* begin EM algorithm */
+  for(it=0; it<*maxit; it++) {
+    
+    for(j=0; j<*n_mar-1; j++)
+      cur_rf[j] = rf[j];
+       
+    /* initialize step_bcsftb calculations */
+    init_stepf(cur_rf, cur_rf, n_gen, *n_mar, cross_scheme, step_bcsftb, probmat);
+      
+    /*** reset counts for countmat ***/
+    for(j=0; j<*n_mar-1; j++) {
+      for(v2=0; v2<n_gen; v2++) {
+	tmp1 = (v2 * (v2 + 1)) / 2;
+	for(v=0; v<=v2; v++) {
+	  countmat[j][v + tmp1] = 0.0;
+	}
+      }
+    }
+    
+    for(i=0; i<*n_ind; i++) { /* i = individual */
+      
+      R_CheckUserInterrupt(); /* check for ^C */
+      
+      /* forward-backward equations */
+      forward_prob(i, *n_mar, n_gen, -1, cross_scheme, *error_prob, Geno, probmat, alpha,
+		   init_bcsftb, emit_bcsftb);
+
+      backward_prob(i, *n_mar, n_gen, -1, cross_scheme, *error_prob, Geno, probmat, beta,
+		    init_bcsftb, emit_bcsftb);
+      
+      /* calculate gamma = log Pr(v, v2, O) */
+      for(j=0; j<*n_mar-1; j++) {
+	for(v=0, s=0.0; v<n_gen; v++) {
+	  for(v2=0; v2<n_gen; v2++) {
+	    gamma[v][v2] = alpha[v][j] + beta[v2][j+1] + stepfc(v+1, v2+1, j, probmat) +
+	      emit_bcsftb(Geno[j+1][i], v2+1, *error_prob, cross_scheme);
+	    
+	    if(v==0 && v2==0) s = gamma[v][v2];
+	    else s = addlog(s, gamma[v][v2]);
+	  }
+	}
+	
+	for(v=0; v<n_gen; v++) {
+	  tmp2 = (v * (v + 1)) / 2;
+	  for(v2=0; v2<n_gen; v2++) {
+	    temp = exp(gamma[v][v2] - s);
+	    if(v2 <= v)
+	      tmp1 = v2 + tmp2;
+	    else
+	      tmp1 = v + (v2 * (v2 + 1)) / 2;
+	    countmat[j][tmp1] += temp;
+	  }
+	}
+      }
+    } /* loop over individuals */
+
+    /* rescale */
+    for(j=0; j<*n_mar-1; j++) {
+      /* *** USING tol IN TWO DISTINCT WAYS CAUSES PROBLEMS *** */
+      /* add tol[1] in est.map to fix this */
+      /* golden section search for MLE of recombination rate */
+      rf[j] = golden_search_exHet(countmat[j], n_gen, *maxit, tol[1], cross_scheme,
+			     comploglik_bcsft_exHet, het);
+
+      if(rf[j] < *tol/1000.0) rf[j] = *tol/1000.0;
+      else if(rf[j] > 0.5-*tol/1000.0) rf[j] = 0.5-*tol/1000.0;
+    }
+
+    if(*verbose>1) {
+      /* print estimates as we go along*/
+      Rprintf("   %4d ", it+1);
+      maxdif=0.0;
+      for(j=0; j<*n_mar-1; j++) {
+	temp = fabs(rf[j] - cur_rf[j])/(cur_rf[j]+*tol*100.0);
+	if(maxdif < temp) maxdif = temp;
+
+	if(rf[j] < *tol/1000.0) rf[j] = *tol/1000.0;
+	else if(rf[j] > 0.5-*tol/1000.0) rf[j] = 0.5-*tol/1000.0;
+      }
+      sprintf(text, "%s%s\n", "  max rel've change = ", pattern);
+      Rprintf(text, maxdif);
+    }
+
+    /* check convergence */
+    for(j=0, flag=0; j<*n_mar-1; j++) {
+      if(fabs(rf[j] - cur_rf[j]) > *tol*(cur_rf[j]+*tol*100.0)) {
+	flag = 1; 
+	break;
+      }
+    }
+
+    if(!flag) break;
+
+  } /* end EM algorithm */
+  
+  if(flag) warning("Didn't converge!\n");
+
+  /* initialize step_bcsftb calculations */
+  init_stepf(rf, rf, n_gen, *n_mar, cross_scheme, step_bcsftb, probmat);
+
+  /* calculate log likelihood */
+  *loglik = 0.0;
+  for(i=0; i<*n_ind; i++) { /* i = individual */
+
+    /* forward equations */
+    forward_prob(i, *n_mar, n_gen, -1, cross_scheme, *error_prob, Geno, probmat, alpha,
+		 init_bcsftb, emit_bcsftb);
+
+    curloglik = alpha[0][*n_mar-1];
+    for(v=1; v<n_gen; v++)
+      curloglik = addlog(curloglik, alpha[v][*n_mar-1]);
+
+    *loglik += curloglik;
+  }
+
+  if(*verbose) {
+    if(*verbose < 2) {
+      /* print final estimates */
+      Rprintf("  no. iterations = %d\n", it+1);
+      maxdif=0.0;
+      for(j=0; j<*n_mar-1; j++) {
+	temp = fabs(rf[j] - cur_rf[j])/(cur_rf[j]+*tol*100.0);
+	if(maxdif < temp) maxdif = temp;
+      }
+      sprintf(text, "%s%s\n", "  max rel've change at last step = ", pattern);
+      Rprintf(text, maxdif);
+    }
+    
+    Rprintf("  loglik: %10.4lf\n\n", *loglik);
+  }
+
+}
+
 void argmax_genoo_bcsft(int *n_ind, int *n_pos, int *geno, 
 		   double *rf, double *error_prob, int *argmax)
 {		    

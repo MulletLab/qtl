@@ -926,7 +926,7 @@ void est_map_bcsft_exHet(int *n_ind, int *n_mar, int *geno, double *rf,
   char pattern[100], text[200];
   int cross_scheme[2];
   double **countmat, **probmat;
-  warning("This is BCsFt code modified by RFM and SKT; this is in development, and should not be used for general purposes");
+  warning("This is BCsFt code modified by RFM and SKT, the passable heterozygosity version; this is in development, and should not be used for general purposes");
   warning("Using a heterozygosity value of %f", *het); 
   /* cross scheme hidden in loglik argument; used by hmm_bcsft */
   cross_scheme[0] = (int) ftrunc(*loglik / 1000.0);
@@ -1494,7 +1494,7 @@ void est_rf_bcsft_exHet(int *n_ind, int *n_mar, int *geno, double *rf,
   int i, j1, j2, **Geno, n_mei=0, flag=0;
   double **Rf, next_rf=0.0;
   int cross_scheme[2];
-  warning("This is BCsFt code modified by RFM and SKT; this is in development, and should not be used for general purposes");
+  warning("This is BCsFt code modified by RFM and SKT, the passable heterozygosity version; this is in development, and should not be used for general purposes");
   warning("Using a heterozygosity value of %f", *het);
 
   /* cross_scheme is hidden in rf */

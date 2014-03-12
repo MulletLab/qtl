@@ -1912,7 +1912,7 @@ void prob_ft_exHet(double rf, int t, double *transpr, double *het)
   B_22 = transpr[3];
   B_23 = transpr[4];
 
-  u = (2 * h) / (2 - 2 * h);
+  u = ((4 * h * B_12) + sqrt(((4 * h * B_12)*(4 * h * B_12))-(4*(2-h*(B_22 + B_23))*(-2*(B_11+B_14)))))/(2*(2-h*(B_22 + B_23)));   //(2 * h) / (2 - 2 * h);
   d = (2 * B_11) + (4 * (u * B_12)) + (2 * B_14) + (u * u * B_22) + (u * u * B_23);
 
   B_11 = (1 / d) * B_11;

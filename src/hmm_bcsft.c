@@ -1853,6 +1853,7 @@ void prob_ft_exHet(double rf, int t, double *transpr, double *het)
   double u;
   double r2, r3, r4, u2, u3, u4, d2, ht, rmin12;
 
+  t1 = t - 1.0;
   for(k=0; k<10; k++)
     transpr[k] = 0.0;
 

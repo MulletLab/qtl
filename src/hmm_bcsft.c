@@ -1846,6 +1846,7 @@ void prob_ft(double rf, int t, double *transpr)
 void prob_ft_exHet(double rf, int t, double *transpr, double *het)
 {
   int k;
+  double t1;
   double r = rf;
   double B_11, B_12, B_14, B_22, B_23;
   double d;

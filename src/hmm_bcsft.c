@@ -1846,80 +1846,50 @@ void prob_ft(double rf, int t, double *transpr)
 void prob_ft_exHet(double rf, int t, double *transpr, double *het)
 {
   int k;
-  double t1,t2,t1m2,w,w2,r2,rw;
-  double beta,gamma,beta1,sbeta1,sgamma1,SDt,SEt,sbetaBA,gamma1,beta2m1;
+  double r = rf;
   double B_11, B_12, B_14, B_22, B_23;
   double d;
   double h = *het;
   double u;
-
-  /* compute transition probabilities to leave double het states */
-  t1 = t - 1.0;
-  t2 = R_pow(2.0, t); /* 2^t */
-  t1m2 = 2.0 / t2;
-  w = 1.0 - rf;
-  w2 = w * w;
-  r2 = rf * rf;
-  rw = w * rf;
+  double r2, r3, r4, u2, u3, u4, d2, ht, rmin12;
 
   for(k=0; k<10; k++)
     transpr[k] = 0.0;
 
-  /* A = prob go from AB.ab to AB.AB at step t */
-  /* D1 -> Dk or Ek -> Ak+1 -> At OR D1 -> Dk or Ek -> Bk+1 -> Ak+s -> At */
-  beta = (w2 + r2) / 2.0; 
-  gamma = (w2 - r2) / 2.0; 
-  beta1 = R_pow(beta, t1);
-  gamma1 = R_pow((w2 - r2) / 2.0, t1);
-  /* beta1 = prob still in D or E at step t */
-  /* sbeta1 = sum of beta1[k] from 1 to t-1 */
-  /* Dt and Et depend on sbeta1 and sgamma1 */
-  sbeta1 = (1.0 - beta1) / (1.0 - beta);
-  sgamma1 = (1.0 - R_pow(gamma, t1)) / (1.0 - gamma);
-  SDt = (sbeta1 + sgamma1) / 8.0;
-  SEt = (sbeta1 - sgamma1) / 8.0;
-  beta2m1 = 1.0 - 2.0 * beta;
-
-  /* old code--make sure new code works first */
-  /* w2pr2 = (w2 + r2); */
-  /* sbetaBA = (rw / 2.0) * (sbeta1 - 2.0 * ((2.0 / t2) - beta1) / (1.0 - 2.0 * beta)); */
-  /* transpr[1] = (2.0 * rw / t2) * ((1.0 - R_pow(w2pr2, t1)) / (1 - w2pr2)); */
-
-  double s2beta1,sbeta2,s2beta2;
-  s2beta1 = (t1m2 - beta1) / beta2m1;     /* sum from 1 to t-1 of of (2*beta)^(k-1). */
-  transpr[1] = rw * s2beta1;                           /* PfB1 = PfDB */
-  transpr[6] = transpr[1];                              /* PfB0 = PfB1 */
-
-  /* sbetaBA = sum beta1[k] * rw/2 * prob(B->A in remaining steps) */
-  sbeta2 = 0.0;
-  if(t > 2.0) sbeta2 = (1.0 - beta1 / beta) / (1.0 - beta); /* sum of beta^(k-1) from 1 to (t-1) */
-  s2beta2 = (2.0 * t1m2 - (beta1 / beta)) / beta2m1;        /* sum of (2*beta)^(k-1) from 1 to t-2 */
-  sbetaBA = 0.5 * rw * (sbeta2 - s2beta2);
-
-  transpr[0] = SDt * w2 + SEt * r2 + sbetaBA;           /* PfA1 = PfDA + PfDEA + PfDBA */
-  transpr[5] = transpr[0];                              /* PfA0 = PfA1 */
-
-  transpr[2] = SDt * r2 + SEt * w2 + sbetaBA;           /* PfbC = PfDC + PfDEC + PfDBC */
-  transpr[3] = (beta1 + gamma1) / 2.0;                  /* PfD = PfDD */
-  transpr[4] = (beta1 - gamma1) / 2.0;                  /* PfE = PfDE */
-
   /////////////////////
   /////////////////////
   ////////////////////// Modifications by SKT and RFM
-  B_11 = transpr[0];   // transpr[0] == transpr[5]
-  B_12 = transpr[1];   // transpr[1] == transpr[6]
-  B_14 = transpr[2];   
-  B_22 = transpr[3];
-  B_23 = transpr[4];
 
-  u = ((4 * h * B_12) + sqrt(((4 * h * B_12)*(4 * h * B_12))-(4*(2-h*(B_22 + B_23))*(-2*(B_11+B_14)))))/(2*(2-h*(B_22 + B_23)));   //(2 * h) / (2 - 2 * h);
-  d = (2 * B_11) + (4 * (u * B_12)) + (2 * B_14) + (u * u * B_22) + (u * u * B_23);
+  r2=R_pow(r,2);
+  r3=R_pow(r,3);
+  r4=R_pow(r,4);
+  u2=R_pow(u,2);
+  u3=R_pow(u,3);
+  u4=R_pow(u,4);
+  d2=R_pow(d,2);
+  ht=R_pow(h,t);
+  rmin12=R_pow((r-1),2);
 
-  B_11 = (1 / d) * B_11;
-  B_12 = ((u) / d) * B_12;
-  B_14 = (1 / d) * B_14;
-  B_22 = ((u * u) / d) * B_22;
-  B_23 = ((u * u) / d) * B_23;
+  u=(2*h)/(2-2*h);
+
+  d=2*(rmin12)+8*u*r*(1-r)+ 2*(r2)+ 2*(u2)*((rmin12)+(r2));
+
+  B_11 = (1/2)*((4*r4*u2)/(d2 - 4*d*r2*u2 + 8*d*r*u2 - 4*d*u2 - 16*r3*u4 + 24*r2*u4 - 16*r*u4 + 4*u4) - (8*(h/2 - 1/2)*(- u*r2 + u*r))/(d - 4*r2*u2 - d*h + 2*h*u2 + 4*r*u2 - 2*u2 - 4*h*r*u2 + 4*h*r2*u2) + (2*rmin12*(- 2*r2*u2 + 4*r*u2 - 2*u2 + d))/(d2 - 4*d*r2*u2 + 8*d*r*u2 - 4*d*u2 - 16*r3*u4 + 24*r2*u4 - 16*r*u4 + 4*u4) + (4*ht*(- u*r2 + u*r))/(h*(4*r2*u2 - 4*r*u2 + 2*u2 - d*h)) - (d*R_pow((-(2*u2*(2*r - 1))/d),t))/(2*u2*(d + 4*r*u2 - 2*u2)) - (d*R_pow(((2*u2*(2*r2 - 2*r + 1))/d),t)*(16*r2*u2 - 16*r3*u2 + 8*r4*u2 - d*h - 8*r*u2 + 2*u2 - 4*d*r2*u + 2*d*h*r + 4*d*r*u - 2*d*h*r2 - 4*d*h*r*u + 4*d*h*r2*u))/(2*(- 4*r2*u2 + 4*r*u2 - 2*u2 + d)*(8*r4*u4 - 16*r3*u4 + 16*r2*u4 - 2*d*h*r2*u2 - 8*r*u4 + 2*d*h*r*u2 + 2*u4 - d*h*u2)));
+
+  B_14 = (1/2)*((2*r2*(- 2*r2*u2 + 4*r*u2 - 2*u2 + d))/(d2 - 4*d*r2*u2 + 8*d*r*u2 - 4*d*u2 - 16*r3*u4 + 24*r2*u4 - 16*r*u4 + 4*u4) - (8*(h/2 - 1/2)*(- u*r2 + u*r))/(d - 4*r2*u2 - d*h + 2*h*u2 + 4*r*u2 - 2*u2 - 4*h*r*u2 + 4*h*r2*u2) + (4*ht*(- u*r2 + u*r))/(h*(4*r2*u2 - 4*r*u2 + 2*u2 - d*h)) + (d*R_pow((-(2*u2*(2*r - 1))/d),t))/(2*u2*(d + 4*r*u2 - 2*u2)) + (4*r2*u2*rmin12)/(d2 - 4*d*r2*u2 + 8*d*r*u2 - 4*d*u2 - 16*r3*u4 + 24*r2*u4 - 16*r*u4 + 4*u4) - (d*R_pow(((2*u2*(2*r2 - 2*r + 1))/d),t)*(16*r2*u2 - 16*r3*u2 + 8*r4*u2 - d*h - 8*r*u2 + 2*u2 - 4*d*r2*u + 2*d*h*r + 4*d*r*u - 2*d*h*r2 - 4*d*h*r*u + 4*d*h*r2*u))/(2*(- 4*r2*u2 + 4*r*u2 - 2*u2 + d)*(8*r4*u4 - 16*r3*u4 + 16*r2*u4 - 2*d*h*r2*u2 - 8*r*u4 + 2*d*h*r*u2 + 2*u4 - d*h*u2)));
+
+  B_12 = (1/4)*( - (8*ht*r*u*(r - 1))/(h*(d*h + 4*r*u2 - 2*u2)) - (4*d*r*(r - 1)*R_pow((-(2*u2*(2*r - 1))/d),t))/(u*(2*r - 1)*(d*h + 4*r*u2 - 2*u2)));
+
+  B_22 = (d*R_pow(((2*u2*(2*r2 - 2*r + 1))/d),t))/(4*(2*r2*u2 - 2*r*u2 + u2)) - (d*R_pow((-(2*u2*(2*r - 1))/d),t))/(4*u2*(2*r - 1));
+
+  B_23 = (d*R_pow(((2*u2*(2*r2 - 2*r + 1))/d),t))/(4*(2*r2*u2 - 2*r*u2 + u2)) + (d*R_pow((-(2*u2*(2*r - 1))/d),t))/(4*u2*(2*r - 1));
+
+
+//(p1)/2 = B11 
+//(p2)/2 = B14
+//(p3)/4 = B12
+//(p4)   = B22
+//(p5)   = B23
 
   transpr[0] = B_11;
   transpr[1] = B_12;

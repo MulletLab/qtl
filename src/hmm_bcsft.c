@@ -1417,10 +1417,14 @@ void prob_ft(double rf, int t, double *transpr)
 
   for (i=0; i <= 6; i++) {
 	  if (transpr[i] != hetExpPr[i]) {
-		  warning("The two arrays do not equal");
-		  warning("transpr[%i] is %d and hetExpPr[%i] is %d", i, transpr[i], i, hetExpPr[i]);
+		  sprintf(text, "%s%d\t%d", "Not equal:", transpr[i], hetExpPr[i]);
+		  Rprintf(text); 
+		  //warning("The two arrays do not equal");
+		  //warning("transpr[%i] is %d and hetExpPr[%i] is %d", i, transpr[i], i, hetExpPr[i]);
 	  }
   }
+        //sprintf(text, "%s%s\n", "  max rel've change = ", pattern);
+      //Rprintf(text, maxdif);
   return;
 }
 void prob_bcsft(double rf, int s, int t, double *transpr)

@@ -1363,6 +1363,65 @@ void prob_ft(double rf, int t, double *transpr)
   transpr[7] = log1p(-exp(transpr[8])) - M_LN2;         /* AA */
   transpr[9] = transpr[7];                              /* aa */
 
+/*  
+ *
+ *
+ *   */
+  int k;
+  double t1;
+  double r = rf;
+  double B_11, B_12, B_14, B_22, B_23;
+  double d;
+  double h = 0.50;
+  double u;
+  double hpowt;
+  double r2, r3, r4, r5, u2, u3, u4, d2;
+  double hetExpPr[10];
+
+  if ((r > 0.499999999) && (r < 0.500000001)) {
+	  r = 0.500000001;
+  }
+
+  u=(2.0*h)/(2.0-2.0*h);
+  r = rf;
+  hpowt = pow(h, t);
+  r2 = pow(r, 2.0);
+  r3 = pow(r, 3.0);
+  r4 = pow(r, 4.0);
+  r5 = pow(r, 5.0);
+
+  u2 = pow(u, 2.0);
+  u3 = pow(u, 3.0);
+  u4 = pow(u, 4.0);
+
+  d=2.0*(pow((1.0-r),2))+8.0*u*r*(1-r)+ 2.0*(r2)+ 2.0*(u2)*((pow((1.0-r),2.0))+(r2));
+
+  d2 = pow(d, 2.0);
+
+  B_11 = (1.0/2.0)*((4.0*r4*u2)/(d2 - 4.0*d*r2*u2 + 8.0*d*r*u2 - 4.0*d*u2 - 16.0*r3*u4 + 24.0*r2*u4 - 16.0*r*u4 + 4.0*u4) - (8.0*(h/2.0 - 1.0/2.0)*(- u*r2 + u*r))/(d - 4.0*r2*u2 - d*h + 2.0*h*u2 + 4.0*r*u2 - 2.0*u2 - 4.0*h*r*u2 + 4.0*h*r2*u2) + (2.0*pow((r - 1.0),2.0)*(- 2.0*r2*u2 + 4.0*r*u2 - 2.0*u2 + d))/(d2 - 4.0*d*r2*u2 + 8.0*d*r*u2 - 4.0*d*u2 - 16.0*r3*u4 + 24.0*r2*u4 - 16.0*r*u4 + 4.0*u4) + (4.0*hpowt*(- u*r2 + u*r))/(h*(4.0*r2*u2 - 4.0*r*u2 + 2.0*u2 - d*h)) - (d*pow((-(2.0*u2*(2.0*r - 1.0))/d),t))/(2.0*u2*(d + 4.0*r*u2 - 2.0*u2)) - (d*pow(((2.0*u2*(2.0*r2 - 2.0*r + 1.0))/d),t)*(16.0*r2*u2 - 16.0*r3*u2 + 8.0*r4*u2 - d*h - 8.0*r*u2 + 2.0*u2 - 4.0*d*r2*u + 2.0*d*h*r + 4.0*d*r*u - 2.0*d*h*r2 - 4.0*d*h*r*u + 4.0*d*h*r2*u))/(2.0*(- 4.0*r2*u2 + 4.0*r*u2 - 2.0*u2 + d)*(8.0*r4*u4 - 16.0*r3*u4 + 16.0*r2*u4 - 2.0*d*h*r2*u2 - 8.0*r*u4 + 2.0*d*h*r*u2 + 2.0*u4 - d*h*u2)));
+
+  B_12 = (-1.0/4.0)*((8.0*hpowt*(- u*r2 + u*r))/(h*(4.0*r2*u2 - 4.0*r*u2 + 2.0*u2 - d*h)) - (4.0*d*(- r2 + r)*pow(((4.0*r2*u2 - 4.0*r*u2 + 2*u2)/d),t))/((2.0*u*r2 - 2.0*u*r + u)*(4.0*r2*u2 - 4.0*r*u2 + 2.0*u2 - d*h)));
+	  
+  B_14 = (1.0/2.0)*((2.0*r2*(- 2.0*r2*u2 + 4.0*r*u2 - 2.0*u2 + d))/(d2 - 4.0*d*r2*u2 + 8.0*d*r*u2 - 4.0*d*u2 - 16.0*r3*u4 + 24.0*r2*u4 - 16.0*r*u4 + 4.0*u4) - (8.0*(h/2.0 - 1.0/2.0)*(- u*r2 + u*r))/(d - 4.0*r2*u2 - d*h + 2.0*h*u2 + 4.0*r*u2 - 2.0*u2 - 4.0*h*r*u2 + 4.0*h*r2*u2) + (4.0*hpowt*(- u*r2 + u*r))/(h*(4.0*r2*u2 - 4.0*r*u2 + 2.0*u2 - d*h)) + (d*pow((-(2.0*u2*(2.0*r - 1.0))/d),t))/(2.0*u2*(d + 4.0*r*u2 - 2.0*u2)) + (4.0*r2*u2*pow((r - 1.0),2.0))/(d2 - 4.0*d*r2*u2 + 8.0*d*r*u2 - 4.0*d*u2 - 16.0*r3*u4 + 24.0*r2*u4 - 16.0*r*u4 + 4.0*u4) - (d*pow(((2.0*u2*(2.0*r2 - 2.0*r + 1.0))/d),t)*(16.0*r2*u2 - 16.0*r3*u2 + 8.0*r4*u2 - d*h - 8.0*r*u2 + 2.0*u2 - 4.0*d*r2*u + 2.0*d*h*r + 4.0*d*r*u - 2.0*d*h*r2 - 4.0*d*h*r*u + 4.0*d*h*r2*u))/(2.0*(- 4.0*r2*u2 + 4.0*r*u2 - 2.0*u2 + d)*(8.0*r4*u4 - 16.0*r3*u4 + 16.0*r2*u4 - 2.0*d*h*r2*u2 - 8.0*r*u4 + 2.0*d*h*r*u2 + 2.0*u4 - d*h*u2)));
+
+  B_22 =(d*pow(((2.0*u2*(2.0*r2 - 2.0*r + 1.0))/d),t))/(4.0*(2.0*r2*u2 - 2.0*r*u2 + u2)) - (d*pow((-(2.0*u2*(2.0*r - 1.0))/d),t))/(4.0*u2*(2.0*r - 1.0));
+
+  B_23 =(d*pow(((2.0*u2*(2.0*r2 - 2.0*r + 1.0))/d),t))/(4.0*(2.0*r2*u2 - 2.0*r*u2 + u2)) + (d*pow((-(2.0*u2*(2.0*r - 1.0))/d),t))/(4.0*u2*(2.0*r - 1.0));
+  
+  hetExpPr[0] = B_11;
+  hetExpPr[1] = B_12;
+  hetExpPr[2] = B_14;
+  hetExpPr[3] = B_22;
+  hetExpPr[4] = B_23;
+  hetExpPr[5] = B_11;
+  hetExpPr[6] = B_12;
+
+  for (i=0; i <= 6; i++) {
+	  if transpr[i] != hetExpPr[i] {
+		  warning("The two arrays do not equal");
+		  warning("transpr[%i] is %d and hetExpPr[%i] is %d", i, transpr[i], i, hetExpPr[i]);
+	  }
+  }
   return;
 }
 void prob_bcsft(double rf, int s, int t, double *transpr)

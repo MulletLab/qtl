@@ -1367,15 +1367,14 @@ void prob_ft(double rf, int t, double *transpr)
  *
  *
  *   */
-  int k;
-  double t1;
   double r = rf;
   double B_11, B_12, B_14, B_22, B_23;
   double d;
   double h = 0.50;
   double u;
   double hpowt;
-  double r2, r3, r4, r5, u2, u3, u4, d2;
+  double r3, r4, r5, u2, u3, u4, d2;
+  int i;
   double hetExpPr[10];
 
   if ((r > 0.499999999) && (r < 0.500000001)) {

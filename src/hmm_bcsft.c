@@ -1370,7 +1370,7 @@ void prob_ft(double rf, int t, double *transpr)
   double r = rf;
   double B_11, B_12, B_14, B_22, B_23;
   double d;
-  double h = 0.683;
+  double h = 0.5;
   double u;
   double hpowt;
   double r3, r4, r5, u2, u3, u4, d2;
@@ -1431,8 +1431,13 @@ void prob_ft(double rf, int t, double *transpr)
 	 // }
   }
 
-  sprintf(text, "%s%f%f%f", "Marginal probabilities 7, 8, 9: ", transpr[7], transpr[8], transpr[9]);
-  Rprintf(text);
+  //sprintf(text, "%s\t%f\t%f\t%f\n", "Marginal probabilities 7, 8, 9: ", transpr[7], transpr[8], transpr[9]);
+  //Rprintf(text);
+
+  /* marginal probabilities for one marker */
+  transpr[8] = log(pow(h, t1));                              /* Aa */
+  transpr[7] = log((1 - pow(h, t1))/2);       /* AA */
+  transpr[9] = transpr[7];  
   //
    /* marginal probabilities for one marker */
   //transpr[8] = (-t1 * M_LN2)*(2*h);                             /* Aa */

@@ -1385,6 +1385,10 @@ void prob_ft(double rf, int t, double *transpr)
 	  r = 0.500001;
   }
 
+  if (r < 0.000001) {
+	  r = 0.000001;
+  }
+
   u=(2.0*h)/(2.0-2.0*h);
   r = rf;
   hpowt = pow(h, t);

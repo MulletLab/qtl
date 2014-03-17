@@ -1432,9 +1432,13 @@ void prob_ft(double rf, int t, double *transpr)
   }
   //
    /* marginal probabilities for one marker */
-  transpr[8] = -t1 * log(1/h);                             /* Aa */
-  transpr[7] = log1p(-exp(transpr[8])) - log(1/h);         /* AA */
+  //transpr[8] = -t1 * log(1/h);                             /* Aa */
+  //transpr[7] = log1p(-exp(transpr[8])) - log(1/h);         /* AA */
+  //transpr[9] = transpr[7];                              /* aa */
+  transpr[8] = 0.0;                             /* Aa */
+  transpr[7] = 0.0;         /* AA */
   transpr[9] = transpr[7];                              /* aa */
+
   return;
 }
 void prob_bcsft(double rf, int s, int t, double *transpr)

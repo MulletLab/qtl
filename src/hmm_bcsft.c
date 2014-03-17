@@ -1380,17 +1380,17 @@ void prob_ft(double rf, int t, double *transpr)
 
   for(k=0; k<10; k++)
     hetExpPr[k] = 0.0;
-
-  if ((r > 0.49999) && (r < 0.50001)) {
-	  r = 0.49999;
+  r = rf;
+  if ((r > 0.499999) && (r < 0.500001)) {
+	  r = 0.499999;
   }
 
-  if (r < 0.0001) {
-	  r = 0.0001;
+  if (r < 0.000001) {
+	  r = 0.000001;
   }
 
   u=(2.0*h)/(2.0-2.0*h);
-  r = rf;
+
   hpowt = pow(h, t);
   r2 = pow(r, 2.0);
   r3 = pow(r, 3.0);

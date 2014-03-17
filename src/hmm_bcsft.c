@@ -1370,7 +1370,7 @@ void prob_ft(double rf, int t, double *transpr)
   double r = rf;
   double B_11, B_12, B_14, B_22, B_23;
   double d;
-  double h = 0.63750;
+  double h = 0.50;
   double u;
   double hpowt;
   double r3, r4, r5, u2, u3, u4, d2;
@@ -1423,13 +1423,13 @@ void prob_ft(double rf, int t, double *transpr)
   hetExpPr[5] = B_11;
   hetExpPr[6] = B_12;
 
-  for (i=0; i <= 6; i++) {
-	  transpr[i] = hetExpPr[i];
+  //for (i=0; i <= 6; i++) {
+//	  transpr[i] = hetExpPr[i];
 	  //if (transpr[i] != hetExpPr[i]) {
 		  //sprintf(text, "%s%f\t%f\t%s\t%d\t%s\t%f\n", "Not equal: ", transpr[i], hetExpPr[i], " i is:", i, "r is: ", r);
 		  //Rprintf(text); 
 	 // }
-  }
+  //}
   return;
 }
 void prob_bcsft(double rf, int s, int t, double *transpr)

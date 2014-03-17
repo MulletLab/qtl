@@ -1376,6 +1376,7 @@ void prob_ft(double rf, int t, double *transpr)
   double r3, r4, r5, u2, u3, u4, d2;
   int i;
   double hetExpPr[10];
+  char text[200];
 
   if ((r > 0.499999999) && (r < 0.500000001)) {
 	  r = 0.500000001;

@@ -1417,7 +1417,7 @@ void prob_ft(double rf, int t, double *transpr)
   hetExpPr[6] = B_12;
 
   for (i=0; i <= 6; i++) {
-	  if transpr[i] != hetExpPr[i] {
+	  if (transpr[i] != hetExpPr[i]) {
 		  warning("The two arrays do not equal");
 		  warning("transpr[%i] is %d and hetExpPr[%i] is %d", i, transpr[i], i, hetExpPr[i]);
 	  }

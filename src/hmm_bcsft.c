@@ -1370,7 +1370,7 @@ void prob_ft(double rf, int t, double *transpr)
   double r = rf;
   double B_11, B_12, B_14, B_22, B_23;
   double d;
-  double h = 0.50;
+  double h = 0.63750;
   double u;
   double hpowt;
   double r3, r4, r5, u2, u3, u4, d2;

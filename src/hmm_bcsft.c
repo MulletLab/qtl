@@ -1425,7 +1425,7 @@ void prob_ft(double rf, int t, double *transpr)
 
   for (i=0; i <= 6; i++) {
 	  if (transpr[i] != hetExpPr[i]) {
-		  sprintf(text, "%s%f\t%f\t%s\t%d\n", "Not equal:", transpr[i], hetExpPr[i], " i is:", i);
+		  sprintf(text, "%s%f\t%f\t%s\t%d\t%s\t%f\n", "Not equal: ", transpr[i], hetExpPr[i], " i is:", i, "r is: ", r);
 		  Rprintf(text); 
 		  //warning("The two arrays do not equal");
 		  //warning("transpr[%i] is %d and hetExpPr[%i] is %d", i, transpr[i], i, hetExpPr[i]);

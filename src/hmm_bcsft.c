@@ -1850,7 +1850,7 @@ void prob_ft_exHet(double rf, int t, double *transpr, double *het)
   double d, u;
   double h = *het;
   double hpowt;
-  double r3, r4, r5, u2, u3, u4, d2;
+  double r2, r3, r4, r5, u2, u3, u4, d2;
   int k;
 
   r = rf;

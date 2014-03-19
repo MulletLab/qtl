@@ -1372,9 +1372,10 @@ void prob_ft(double rf, int t, double *transpr)
   double d;
   //double h = 0.719685673;  //e^(ln(percentage)/(t-1));
   //double h = 0.6059627021;
-  double h = 0.50;
+  //double h = 0.50;
   //double h = 0.6812920691;
   //double h = 0.5574255561;
+  double h = 0.7023121919;
   double u;
   double hpowt;
   double r3, r4, r5, u2, u3, u4, d2;

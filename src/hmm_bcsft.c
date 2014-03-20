@@ -760,7 +760,7 @@ void est_map_bcsft(int *n_ind, int *n_mar, int *geno, double *rf,
 
     Rprintf("countmat[marker][genotype] now contains:\n");
     for(j = 0; j < *n_mar; j++) {
-	 printArrayDouble(10, probmat[j]);
+	 printArrayDouble(10, countmat[j]);
     }
 
     /* rescale */

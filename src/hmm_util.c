@@ -74,7 +74,7 @@ void init_stepf(double *rf, double *rf2, int n_gen, int n_mar, int *cross_scheme
   }
   Rprintf("probmat[marker][genotype] now contains:\n"); /*These are the probabilities of true genotypes at each marker? */
   for(j = 0; j < n_mar; j++) {
-	 printArrayDouble(10, probmat[j]);
+	 printArrayDouble(9, probmat[j]);
   } 
 }
 
@@ -135,6 +135,7 @@ void backward_prob(int i, int n_mar, int n_gen, int curpos, int *cross_scheme, d
 		   double initf(int, int *), 
 		   double emitf(int, int, double, int *))
 {
+	  Rprintf("Starting backward_prob()\n");
   /* backward equations */
 
   /* Note: true genotypes coded as 1, 2, ...

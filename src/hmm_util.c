@@ -116,9 +116,11 @@ void forward_prob(int i, int n_mar, int n_gen, int curpos, int *cross_scheme, do
   for(v=0; v<n_gen; v++) { //initf here is init_bcsftb; emitf is emit_bcsftb.
     alpha[v][0] = initf(v+1, cross_scheme) + emitf(Geno[0][i], v+1, errortol, cross_scheme);
     Rprintf("alpha[v][0]:");
-    //sprintf(verboseString, "alpha[0][0] = %d", v);
-    //Rprintf(verboseString);
+    sprintf(verboseString, "%d", v);
+    Rprintf(verboseString);
+    Rprintf("\t");
   }
+  Rprintf("\n");
   if(curpos == 0) errortol = TOL;
 
   for(j=1; j<n_mar; j++) {

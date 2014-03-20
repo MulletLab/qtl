@@ -69,10 +69,10 @@ void init_stepf(double *rf, double *rf2, int n_gen, int n_mar, int *cross_scheme
     for(obs2=1; obs2<=n_gen; obs2++) {
       tmp1 = ((obs2 * (obs2 - 1)) / 2) - 1;
       for(obs1=1; obs1<=obs2; obs1++)
-	probmat[j][obs1 + tmp1] = stepf(obs1, obs2, rf[j], rf2[j], cross_scheme);
+	probmat[j][obs1 + tmp1] = stepf(obs1, obs2, rf[j], rf2[j], cross_scheme); /*rf2[j] is labeled as a "junk" input argument in prob_bcsftb()"*/
     }
   }
-  Rprintf("probmat[][] now contains:\n");
+  Rprintf("probmat[marker][genotype] now contains:\n"); /*These are the probabilities of true genotypes at each marker? */
   for(j = 0; j < n_mar; j++) {
 	 printArrayDouble(9, probmat[j]);
   } 

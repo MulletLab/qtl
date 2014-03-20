@@ -323,15 +323,15 @@ double emit_bcsftb(int obs_gen, int true_gen, double error_prob, int *cross_sche
 double step_bcsftb(int gen1, int gen2, double rf, double junk, int *cross_scheme)
 {
   char verboseString[100];
-  sprintf(verboseString, "Starting step_bcsftb with gen1 of %d, gen2 of %d, rf of %f, and TOL of: %f\n", gen1, gen2, rf, TOL);
-  Rprintf(verboseString);
+  //sprintf(verboseString, "Starting step_bcsftb with gen1 of %d, gen2 of %d, rf of %f, and TOL of: %f\n", gen1, gen2, rf, TOL);
+  //Rprintf(verboseString);
 
   static double oldrf = -1.0;
   static double transpr[10];
   static int s = -1;
   static int t = -1;
   
-  if(s != cross_scheme[0] || t != cross_scheme[1] || fabs(rf - oldrf) > TOL) {
+  if(s != cross_scheme[0] || t != cross_scheme[1] || fabs(rf - oldrf) > TOL) { /* This if statement basically means it only runs once for a marker since rf gets set to TOL below. */
     s = cross_scheme[0];
     t = cross_scheme[1];
 
@@ -371,8 +371,8 @@ double step_bcsftb(int gen1, int gen2, double rf, double junk, int *cross_scheme
   if(gen1 > 2) gen1--;
   out -= transpr[6+gen1];
 
-  sprintf(verboseString, "Returning %f\n", out);
-  Rprintf(verboseString);
+  //sprintf(verboseString, "Returning %f\n", out);
+  //Rprintf(verboseString);
   return(out);
 }
 
@@ -700,6 +700,9 @@ void est_map_bcsft(int *n_ind, int *n_mar, int *geno, double *rf,
     for(j=0; j<*n_mar-1; j++)
       cur_rf[j] = rf[j];
       
+    Rprintf("Values in cur_rf[]:\t");
+    printArrayDouble(*n_mar, cur_rf);
+
     /* initialize step_bcsftb calculations */
     init_stepf(cur_rf, cur_rf, n_gen, *n_mar, cross_scheme, step_bcsftb, probmat);
       

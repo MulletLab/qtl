@@ -759,7 +759,7 @@ void est_map_bcsft(int *n_ind, int *n_mar, int *geno, double *rf,
     } /* loop over individuals */
 
     Rprintf("countmat[marker][genotype] now contains:\n");
-    for(j = 0; j < n_mar; j++) {
+    for(j = 0; j < *n_mar; j++) {
 	 printArrayDouble(10, probmat[j]);
     }
 

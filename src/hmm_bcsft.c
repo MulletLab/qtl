@@ -324,8 +324,7 @@ double step_bcsftb(int gen1, int gen2, double rf, double junk, int *cross_scheme
 {
   char verboseString[100];
   //sprintf(verboseString, "Starting step_bcsftb with gen1 of %d, gen2 of %d, rf of %f, and TOL of: %f\n", gen1, gen2, rf, TOL);
-
-  Rprintf(verboseString);
+  //Rprintf(verboseString);
 
   static double oldrf = -1.0;
   static double transpr[10];

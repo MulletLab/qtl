@@ -625,6 +625,10 @@ void est_map_bcsft(int *n_ind, int *n_mar, int *geno, double *rf,
 		   double *error_prob, double *loglik, int *maxit, 
 		   double *tol, int *verbose)
 {
+  char verboseString[1000];
+  sprintf(verboseString, "%s", "Starting est_map_bcsft()");
+  Rprintf(verboseString);
+
   int i, j, v, v2, it, flag=0, **Geno, ndigits,tmp1,tmp2;
   double **alpha, **beta, **gamma, *cur_rf;
   double s, curloglik, maxdif, temp;

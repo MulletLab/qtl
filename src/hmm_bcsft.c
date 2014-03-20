@@ -649,8 +649,8 @@ void est_map_bcsft(int *n_ind, int *n_mar, int *geno, double *rf,
   sprintf(verboseString, "%s", "Starting est_map_bcsft()\n");
   Rprintf(verboseString);
 
-  Rprintf("Values in geno array:\t");
-  printArrayInt((*n_ind + *n_ind), geno);
+  Rprintf("Values in original geno array:\t");
+  printArrayInt(((*n_ind) * (*n_mar)), geno);
 
   int i, j, v, v2, it, flag=0, **Geno, ndigits,tmp1,tmp2;
   double **alpha, **beta, **gamma, *cur_rf;
@@ -684,6 +684,8 @@ void est_map_bcsft(int *n_ind, int *n_mar, int *geno, double *rf,
   allocate_dmatrix(*n_mar, 10, &countmat);
   allocate_dmatrix(*n_mar, 10, &probmat);
 
+  Rprintf("Values for Geno[1] in reorgainzed **Geno:");
+  printArrayInt(*n_mar, Geno[1]);
 
   /* digits in verbose output */
   if(*verbose) {

@@ -338,7 +338,7 @@ double step_bcsftb(int gen1, int gen2, double rf, double junk, int *cross_scheme
 
     prob_bcsft(rf, s, t, transpr);
 
-    Rprintf("transpr[] is now:\t");
+    Rprintf("After prob_bcsft, transpr[] is:\t");
     printArrayDouble(10, transpr);
 
     /* expand when phase is known */
@@ -350,7 +350,8 @@ double step_bcsftb(int gen1, int gen2, double rf, double junk, int *cross_scheme
       transpr[8] -= M_LN2; /* log(pr(gen1=2)) = log(pr(gen2=3)) */
     }
 
-    Rprintf("transpr[] is now:\t");
+    Rprintf("After expanding when phase is known, transpr[] is:\t");
+    printArrayDouble(10, transpr);
 
     /* put probabilities on log scale */
     int k;
@@ -369,7 +370,7 @@ double step_bcsftb(int gen1, int gen2, double rf, double junk, int *cross_scheme
   out -= transpr[6+gen1];
 
   char verboseString[100];
-  sprintf(verboseString, "Returning %f", out);
+  sprintf(verboseString, "Returning %f\n", out);
   Rprintf(verboseString);
   return(out);
 }

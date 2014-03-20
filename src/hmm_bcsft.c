@@ -322,7 +322,9 @@ double emit_bcsftb(int obs_gen, int true_gen, double error_prob, int *cross_sche
 
 double step_bcsftb(int gen1, int gen2, double rf, double junk, int *cross_scheme)
 {
-  Rprintf("Starting step_bcsftb\n");
+  char verboseString[100];
+  sprintf(verboseString, "Starting step_bcsftb with gen1 of %i, gen2 of %i, rf of %d, and TOL of: %d\n", gen1, gen2, rf, TOL);
+  Rprintf(verboseString);
 
   static double oldrf = -1.0;
   static double transpr[10];
@@ -369,7 +371,6 @@ double step_bcsftb(int gen1, int gen2, double rf, double junk, int *cross_scheme
   if(gen1 > 2) gen1--;
   out -= transpr[6+gen1];
 
-  char verboseString[100];
   sprintf(verboseString, "Returning %f\n", out);
   Rprintf(verboseString);
   return(out);

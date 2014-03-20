@@ -51,6 +51,26 @@
 
 /* ref: Jiang and Zeng (1997 Genetics) */
 
+void printArrayDouble(int numIndices, double *array) {
+	int i;
+	char string[100]
+	for (i = 0; i < numIndices; i++) {
+		sprintf(string, "%d\t", array[i]);
+		Rprintf(string);
+	}
+	Rprintf("\n");
+}
+
+void printArrayInt(int numIndices, int *array) {
+	int i;
+	char string[100]
+	for (i = 0; i < numIndices; i++) {
+		sprintf(string, "%i\t", array[i]);
+		Rprintf(string);
+	}
+	Rprintf("\n");
+}
+
 void prob_bcsft(double rf, int s, int t, double *transpr);
 void count_bcsft(double rf, int s, int t, double *transct);
 void expect_bcsft(double rf, int s, int t, double *transexp);
@@ -626,7 +646,7 @@ void est_map_bcsft(int *n_ind, int *n_mar, int *geno, double *rf,
 		   double *tol, int *verbose)
 {
   char verboseString[1000];
-  sprintf(verboseString, "%s", "Starting est_map_bcsft()");
+  sprintf(verboseString, "%s", "Starting est_map_bcsft()\n");
   Rprintf(verboseString);
 
   int i, j, v, v2, it, flag=0, **Geno, ndigits,tmp1,tmp2;
@@ -640,7 +660,9 @@ void est_map_bcsft(int *n_ind, int *n_mar, int *geno, double *rf,
   cross_scheme[0] = (int) ftrunc(*loglik / 1000.0);
   cross_scheme[1] = ((int) *loglik) - 1000 * cross_scheme[0];
   *loglik = 0.0;
-  
+ 
+  printArrayInt(2, cross_scheme);
+
   /* n_gen inferred from cross scheme */
   int n_gen;
   n_gen = 2;

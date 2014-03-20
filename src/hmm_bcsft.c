@@ -322,7 +322,9 @@ double emit_bcsftb(int obs_gen, int true_gen, double error_prob, int *cross_sche
 {
   char verboseString[100];
   //double returnVal = 10.0; //emit_f2b(obs_gen, true_gen, error_prob,cross_scheme);
-  sprintf(verboseString, "Starting emit_bcsftb() with obs_gen of %d, true_gen of %d, error prob of %f\n", obs_gen, true_gen, error_prob);
+  //sprintf(verboseString, "Starting emit_bcsftb() with obs_gen of %d, true_gen of %d, error prob of %f\n", obs_gen, true_gen, error_prob);
+  //Rprintf(verboseString);
+  sprintf(verboseString, "Starting emit_bcsftb()");
   Rprintf(verboseString);
 	
   if(cross_scheme[1] > 0) return(emit_f2b(obs_gen, true_gen, error_prob,cross_scheme));

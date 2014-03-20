@@ -326,7 +326,7 @@ double emit_bcsftb(int obs_gen, int true_gen, double error_prob, int *cross_sche
   //Rprintf(verboseString);
   double returnVal;
   returnVal = emit_f2b(obs_gen, true_gen, error_prob,cross_scheme);
-  sprintf(verboseString, "Starting emit_bcsftb()\n");
+  sprintf(verboseString, "Starting emit_bcsftb(), it will return %f\n", returnVal);
   Rprintf(verboseString);
 	
   if(cross_scheme[1] > 0) return(emit_f2b(obs_gen, true_gen, error_prob,cross_scheme));

@@ -661,12 +661,16 @@ void est_map_bcsft(int *n_ind, int *n_mar, int *geno, double *rf,
   cross_scheme[1] = ((int) *loglik) - 1000 * cross_scheme[0];
   *loglik = 0.0;
  
+  Rprintf("Values in cross_scheme[0] and [1]:\t");
   printArrayInt(2, cross_scheme);
 
   /* n_gen inferred from cross scheme */
   int n_gen;
   n_gen = 2;
   if(cross_scheme[1] > 0) n_gen = 4;
+
+  sprintf(verboseString, "n_gen is set to: %d", n_gen);
+  Rprintf(verboseString);
   
   /* allocate space for beta and reorganize geno */
   reorg_geno(*n_ind, *n_mar, geno, &Geno);

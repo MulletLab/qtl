@@ -332,7 +332,7 @@ double step_bcsftb(int gen1, int gen2, double rf, double junk, int *cross_scheme
   static int s = -1;
   static int t = -1;
   
-  if(s != cross_scheme[0] || t != cross_scheme[1] || fabs(rf - oldrf) > TOL) { /* This if statement basically means it only runs once for a marker since rf gets set to TOL below. */
+  if(s != cross_scheme[0] || t != cross_scheme[1] || fabs(rf - oldrf) > TOL) { 
     s = cross_scheme[0];
     t = cross_scheme[1];
 
@@ -363,6 +363,8 @@ double step_bcsftb(int gen1, int gen2, double rf, double junk, int *cross_scheme
       transpr[k] = log(transpr[k]);
     }
   }
+    Rprintf("After taking log, transpr[] is:\t");
+    printArrayDouble(10, transpr);
 
   double out;
   /* Find joint probability pr(gen1,gen2). */

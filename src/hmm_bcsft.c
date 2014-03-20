@@ -53,7 +53,7 @@
 
 void printArrayDouble(int numIndices, double *array) {
 	int i;
-	char string[100]
+	char string[100];
 	for (i = 0; i < numIndices; i++) {
 		sprintf(string, "%d\t", array[i]);
 		Rprintf(string);
@@ -63,7 +63,7 @@ void printArrayDouble(int numIndices, double *array) {
 
 void printArrayInt(int numIndices, int *array) {
 	int i;
-	char string[100]
+	char string[100];
 	for (i = 0; i < numIndices; i++) {
 		sprintf(string, "%i\t", array[i]);
 		Rprintf(string);

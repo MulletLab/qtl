@@ -34,11 +34,34 @@
 #include <R_ext/PrtUtil.h>
 #include "hmm_main.h"
 #include "util.h"
-   
+
+
+void printArrayDouble(int numIndices, double *array) {
+	int i;
+	char string[100];
+	for (i = 0; i < numIndices; i++) {
+		sprintf(string, "%f\t", array[i]);
+		Rprintf(string);
+	}
+	Rprintf("\n");
+}
+
+void printArrayInt(int numIndices, int *array) {
+	int i;
+	char string[100];
+	for (i = 0; i < numIndices; i++) {
+		sprintf(string, "%d\t", array[i]);
+		Rprintf(string);
+	}
+	Rprintf("\n");
+}
+
 void init_stepf(double *rf, double *rf2, int n_gen, int n_mar, int *cross_scheme, 
 		double stepf(int, int, double, double, int *),
 		double **probmat)
 {
+  Rprintf("Starting init_stepf");
+
   int j,obs1,obs2,tmp1;
   
   for(j=0; j<n_mar; j++) {

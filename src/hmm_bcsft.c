@@ -51,25 +51,6 @@
 
 /* ref: Jiang and Zeng (1997 Genetics) */
 
-void printArrayDouble(int numIndices, double *array) {
-	int i;
-	char string[100];
-	for (i = 0; i < numIndices; i++) {
-		sprintf(string, "%f\t", array[i]);
-		Rprintf(string);
-	}
-	Rprintf("\n");
-}
-
-void printArrayInt(int numIndices, int *array) {
-	int i;
-	char string[100];
-	for (i = 0; i < numIndices; i++) {
-		sprintf(string, "%d\t", array[i]);
-		Rprintf(string);
-	}
-	Rprintf("\n");
-}
 
 void prob_bcsft(double rf, int s, int t, double *transpr);
 void count_bcsft(double rf, int s, int t, double *transct);
@@ -339,6 +320,8 @@ double emit_bcsftb(int obs_gen, int true_gen, double error_prob, int *cross_sche
 
 double step_bcsftb(int gen1, int gen2, double rf, double junk, int *cross_scheme)
 {
+  Rprintf("Starting step_bcsftb\n");
+
   static double oldrf = -1.0;
   static double transpr[10];
   static int s = -1;
@@ -649,8 +632,8 @@ void est_map_bcsft(int *n_ind, int *n_mar, int *geno, double *rf,
   sprintf(verboseString, "%s", "Starting est_map_bcsft()\n");
   Rprintf(verboseString);
 
-  Rprintf("Values in original geno array:\t");
-  printArrayInt(((*n_ind) * (*n_mar)), geno);
+  //Rprintf("Values in original geno array:\t");
+  //printArrayInt(((*n_ind) * (*n_mar)), geno);
 
   Rprintf("Values in original rf array:\t");
   printArrayDouble(*n_mar, rf);
@@ -687,8 +670,8 @@ void est_map_bcsft(int *n_ind, int *n_mar, int *geno, double *rf,
   allocate_dmatrix(*n_mar, 10, &countmat);
   allocate_dmatrix(*n_mar, 10, &probmat);
 
-  Rprintf("Values for Geno[1] (Marker 1) in reorgainzed **Geno:\t"); /* Geno should be Geno[mar][ind] */
-  printArrayInt(*n_ind, Geno[1]);
+  Rprintf("Values for Geno[0] (first marker) in reorgainzed **Geno:\t"); /* Geno should be Geno[mar][ind] */
+  printArrayInt(*n_ind, Geno[0]);
 
   /* digits in verbose output */
   if(*verbose) {
@@ -699,10 +682,14 @@ void est_map_bcsft(int *n_ind, int *n_mar, int *geno, double *rf,
 
   /* begin EM algorithm */
   for(it=0; it<*maxit; it++) {
-    
+    sprintf(verboseString, "On iteration %d\n", it);
+    Rprint(verboseString);
+
     for(j=0; j<*n_mar-1; j++)
       cur_rf[j] = rf[j];
-       
+      
+    Rprintf("About to call init_stepf()...\n");
+
     /* initialize step_bcsftb calculations */
     init_stepf(cur_rf, cur_rf, n_gen, *n_mar, cross_scheme, step_bcsftb, probmat);
       

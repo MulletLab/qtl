@@ -649,6 +649,9 @@ void est_map_bcsft(int *n_ind, int *n_mar, int *geno, double *rf,
   sprintf(verboseString, "%s", "Starting est_map_bcsft()\n");
   Rprintf(verboseString);
 
+  Rprintf("Values in geno array:\t");
+  printArrayInt(4, geno);
+
   int i, j, v, v2, it, flag=0, **Geno, ndigits,tmp1,tmp2;
   double **alpha, **beta, **gamma, *cur_rf;
   double s, curloglik, maxdif, temp;
@@ -669,7 +672,7 @@ void est_map_bcsft(int *n_ind, int *n_mar, int *geno, double *rf,
   n_gen = 2;
   if(cross_scheme[1] > 0) n_gen = 4;
 
-  sprintf(verboseString, "n_gen is set to: %d", n_gen);
+  sprintf(verboseString, "n_gen is set to: %d\n", n_gen);
   Rprintf(verboseString);
   
   /* allocate space for beta and reorganize geno */
@@ -680,6 +683,7 @@ void est_map_bcsft(int *n_ind, int *n_mar, int *geno, double *rf,
   allocate_double(*n_mar-1, &cur_rf);
   allocate_dmatrix(*n_mar, 10, &countmat);
   allocate_dmatrix(*n_mar, 10, &probmat);
+
 
   /* digits in verbose output */
   if(*verbose) {

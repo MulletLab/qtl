@@ -320,9 +320,9 @@ double init_bcsftb(int true_gen, int *cross_scheme)
 
 double emit_bcsftb(int obs_gen, int true_gen, double error_prob, int *cross_scheme)
 {
-  char verboseString[100];
-  sprintf(verboseString, "Starting emit_bcsftb() with obs_gen of %d, true_gen of %d, and error prob of %f, and returning %f\n", obs_gen, true_gen, error_prob, emit_f2b(obs_gen, true_gen, error_prob,cross_scheme));
-  Rprintf(verboseString);
+  //char verboseString[100];
+  //sprintf(verboseString, "Starting emit_bcsftb() with obs_gen of %d, true_gen of %d, and error prob of %f, and returning %f\n", obs_gen, true_gen, error_prob, emit_f2b(obs_gen, true_gen, error_prob,cross_scheme));
+  //Rprintf(verboseString);
 	
   if(cross_scheme[1] > 0) return(emit_f2b(obs_gen, true_gen, error_prob,cross_scheme));
   return(emit_bc(obs_gen, true_gen, error_prob,cross_scheme));
@@ -331,7 +331,7 @@ double emit_bcsftb(int obs_gen, int true_gen, double error_prob, int *cross_sche
 double step_bcsftb(int gen1, int gen2, double rf, double junk, int *cross_scheme)
 {
   char verboseString[100];
-  sprintf(verboseString, "Starting step_bcsftb() with gen1 of %d, gen2 of %d, rf of %f, and TOL of: %f\n", gen1, gen2, rf, TOL);
+  sprintf(verboseString, "Starting step_bcsftb() with gen1 of %d, gen2 of %d, rf of %f, and TOL of: %f\n", gen1, gen2, rf);
   Rprintf(verboseString);
 
   static double oldrf = -1.0;

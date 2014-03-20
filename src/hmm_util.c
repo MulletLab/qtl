@@ -118,9 +118,9 @@ void forward_prob(int i, int n_mar, int n_gen, int curpos, int *cross_scheme, do
     Rprintf("alpha[v][0]:");
     //sprintf(verboseString, "%f", alpha[v][0]);
     //Rprintf(verboseString);
-    Rprintf("\t");
+    //Rprintf("\t");
   }
-  Rprintf("\n");
+  //Rprintf("\n");
   if(curpos == 0) errortol = TOL;
 
   for(j=1; j<n_mar; j++) {

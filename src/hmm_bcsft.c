@@ -684,8 +684,8 @@ void est_map_bcsft(int *n_ind, int *n_mar, int *geno, double *rf,
 
   /* begin EM algorithm */
   for(it=0; it<*maxit; it++) {
-    sprintf(verboseString, "On iteration %d\n", it);
-    Rprintf(verboseString);
+    //sprintf(verboseString, "On iteration %d\n", it);
+    //Rprintf(verboseString);
 
     for(j=0; j<*n_mar-1; j++)
       cur_rf[j] = rf[j];

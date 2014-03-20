@@ -323,7 +323,7 @@ double emit_bcsftb(int obs_gen, int true_gen, double error_prob, int *cross_sche
 double step_bcsftb(int gen1, int gen2, double rf, double junk, int *cross_scheme)
 {
   char verboseString[100];
-  sprintf(verboseString, "Starting step_bcsftb with gen1 of %d, gen2 of %d, rf of %f, and TOL of: %f\n", gen1, gen2, rf, TOL);
+  //sprintf(verboseString, "Starting step_bcsftb with gen1 of %d, gen2 of %d, rf of %f, and TOL of: %f\n", gen1, gen2, rf, TOL);
 
   Rprintf(verboseString);
 
@@ -341,8 +341,8 @@ double step_bcsftb(int gen1, int gen2, double rf, double junk, int *cross_scheme
 
     prob_bcsft(rf, s, t, transpr);
 
-    Rprintf("After prob_bcsft, transpr[] is:\t");
-    printArrayDouble(10, transpr);
+    //Rprintf("After prob_bcsft, transpr[] is:\t");
+    //printArrayDouble(10, transpr);
 
     /* expand when phase is known */
     if(t > 0) { /* only if Ft in play */
@@ -353,8 +353,8 @@ double step_bcsftb(int gen1, int gen2, double rf, double junk, int *cross_scheme
       transpr[8] -= M_LN2; /* log(pr(gen1=2)) = log(pr(gen2=3)) */
     }
 
-    Rprintf("After expanding when phase is known, transpr[] is:\t");
-    printArrayDouble(10, transpr);
+    //Rprintf("After expanding when phase is known, transpr[] is:\t");
+    //printArrayDouble(10, transpr);
 
     /* put probabilities on log scale */
     int k;
@@ -363,8 +363,8 @@ double step_bcsftb(int gen1, int gen2, double rf, double junk, int *cross_scheme
       transpr[k] = log(transpr[k]);
     }
   }
-    Rprintf("After taking log, transpr[] is:\t");
-    printArrayDouble(10, transpr);
+    //Rprintf("After taking log, transpr[] is:\t");
+    //printArrayDouble(10, transpr);
 
   double out;
   /* Find joint probability pr(gen1,gen2). */
@@ -374,8 +374,8 @@ double step_bcsftb(int gen1, int gen2, double rf, double junk, int *cross_scheme
   if(gen1 > 2) gen1--;
   out -= transpr[6+gen1];
 
-  sprintf(verboseString, "Returning %f\n", out);
-  Rprintf(verboseString);
+  //sprintf(verboseString, "Returning %f\n", out);
+  //Rprintf(verboseString);
   return(out);
 }
 
@@ -720,13 +720,15 @@ void est_map_bcsft(int *n_ind, int *n_mar, int *geno, double *rf,
     }
     
     for(i=0; i<*n_ind; i++) { /* i = individual */
-      
+      sprintf(verboseString, "On individual: %d\n", i);
+      Rprintf(verboseString);
+
       R_CheckUserInterrupt(); /* check for ^C */
       
-      /* forward-backward equations */
+      /* forward-backward equations */ //alpha is indexed like alpha[gen][mar]
       forward_prob(i, *n_mar, n_gen, -1, cross_scheme, *error_prob, Geno, probmat, alpha,
 		   init_bcsftb, emit_bcsftb);
-
+					//beta is indexed like alpha[gen][mar]
       backward_prob(i, *n_mar, n_gen, -1, cross_scheme, *error_prob, Geno, probmat, beta,
 		    init_bcsftb, emit_bcsftb);
       
@@ -755,6 +757,11 @@ void est_map_bcsft(int *n_ind, int *n_mar, int *geno, double *rf,
 	}
       }
     } /* loop over individuals */
+
+    Rprintf("countmat[marker][genotype] now contains:\n");
+    for(j = 0; j < n_mar; j++) {
+	 printArrayDouble(10, probmat[j]);
+    }
 
     /* rescale */
     for(j=0; j<*n_mar-1; j++) {

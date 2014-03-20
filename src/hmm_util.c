@@ -60,7 +60,7 @@ void init_stepf(double *rf, double *rf2, int n_gen, int n_mar, int *cross_scheme
 		double stepf(int, int, double, double, int *),
 		double **probmat)
 {
-  Rprintf("Starting init_stepf\n");
+  Rprintf("Starting init_stepf()\n");
 
   int j,obs1,obs2,tmp1;
   char verboseString[100];
@@ -74,7 +74,7 @@ void init_stepf(double *rf, double *rf2, int n_gen, int n_mar, int *cross_scheme
   }
   Rprintf("probmat[marker][genotype] now contains:\n"); /*These are the probabilities of true genotypes at each marker? */
   for(j = 0; j < n_mar; j++) {
-	 printArrayDouble(9, probmat[j]);
+	 printArrayDouble(10, probmat[j]);
   } 
 }
 
@@ -97,7 +97,8 @@ void forward_prob(int i, int n_mar, int n_gen, int curpos, int *cross_scheme, do
 	     double initf(int, int *), 
 	     double emitf(int, int, double, int *))
 {
-  /* forward equations */
+  Rprintf("Starting forward_prob()\n");
+   	/* forward equations */
 
   /* Note: true genotypes coded as 1, 2, ...
      but in the alpha's and beta's, we use 0, 1, ... */
@@ -111,7 +112,7 @@ void forward_prob(int i, int n_mar, int n_gen, int curpos, int *cross_scheme, do
 
   errortol = error_prob;
   if(curpos > 0) errortol = TOL;
-  for(v=0; v<n_gen; v++)
+  for(v=0; v<n_gen; v++) //initf here is init_bcsftb; emitf is emit_bcsftb.
     alpha[v][0] = initf(v+1, cross_scheme) + emitf(Geno[0][i], v+1, errortol, cross_scheme);
   if(curpos == 0) errortol = TOL;
 

@@ -51,6 +51,8 @@
 
 /* ref: Jiang and Zeng (1997 Genetics) */
 
+void printArrayDouble(int numIndices, double *array);
+void printArrayInt(int numIndices, int *array);
 
 void prob_bcsft(double rf, int s, int t, double *transpr);
 void count_bcsft(double rf, int s, int t, double *transct);
@@ -683,7 +685,7 @@ void est_map_bcsft(int *n_ind, int *n_mar, int *geno, double *rf,
   /* begin EM algorithm */
   for(it=0; it<*maxit; it++) {
     sprintf(verboseString, "On iteration %d\n", it);
-    Rprint(verboseString);
+    Rprintf(verboseString);
 
     for(j=0; j<*n_mar-1; j++)
       cur_rf[j] = rf[j];

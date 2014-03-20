@@ -650,7 +650,7 @@ void est_map_bcsft(int *n_ind, int *n_mar, int *geno, double *rf,
   Rprintf(verboseString);
 
   Rprintf("Values in geno array:\t");
-  printArrayInt(4, geno);
+  printArrayInt(*n_ind, geno);
 
   int i, j, v, v2, it, flag=0, **Geno, ndigits,tmp1,tmp2;
   double **alpha, **beta, **gamma, *cur_rf;

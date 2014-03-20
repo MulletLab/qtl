@@ -338,6 +338,9 @@ double step_bcsftb(int gen1, int gen2, double rf, double junk, int *cross_scheme
 
     prob_bcsft(rf, s, t, transpr);
 
+    Rsprintf("transpr[] is now:\t");
+    printArrayDouble(10, transpr);
+
     /* expand when phase is known */
     if(t > 0) { /* only if Ft in play */
       transpr[1] /= 2.0; /* B1 split */
@@ -346,6 +349,8 @@ double step_bcsftb(int gen1, int gen2, double rf, double junk, int *cross_scheme
       transpr[4] /= 2.0; /* E split */
       transpr[8] -= M_LN2; /* log(pr(gen1=2)) = log(pr(gen2=3)) */
     }
+
+    Rsprintf("transpr[] is now:\t");
 
     /* put probabilities on log scale */
     int k;
@@ -363,6 +368,9 @@ double step_bcsftb(int gen1, int gen2, double rf, double junk, int *cross_scheme
   if(gen1 > 2) gen1--;
   out -= transpr[6+gen1];
 
+  char verboseString[100];
+  sprintf(verboseString, "Returning %f", out);
+  Rsprintf(verboseString);
   return(out);
 }
 
@@ -690,8 +698,6 @@ void est_map_bcsft(int *n_ind, int *n_mar, int *geno, double *rf,
     for(j=0; j<*n_mar-1; j++)
       cur_rf[j] = rf[j];
       
-    Rprintf("About to call init_stepf()...\n");
-
     /* initialize step_bcsftb calculations */
     init_stepf(cur_rf, cur_rf, n_gen, *n_mar, cross_scheme, step_bcsftb, probmat);
       

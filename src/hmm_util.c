@@ -72,7 +72,7 @@ void init_stepf(double *rf, double *rf2, int n_gen, int n_mar, int *cross_scheme
 	probmat[j][obs1 + tmp1] = stepf(obs1, obs2, rf[j], rf2[j], cross_scheme);
     }
   }
-  Rprintf("probmat[][] now contains:\t");
+  Rprintf("probmat[][] now contains:\n");
   for(j = 0; j < n_mar; j++) {
 	 printArrayDouble(9, probmat[j]);
   } 

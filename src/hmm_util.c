@@ -97,6 +97,7 @@ void forward_prob(int i, int n_mar, int n_gen, int curpos, int *cross_scheme, do
 	     double initf(int, int *), 
 	     double emitf(int, int, double, int *))
 {
+  char verboseString[100]; 
   Rprintf("Starting forward_prob()\n");
    	/* forward equations */
 
@@ -112,8 +113,11 @@ void forward_prob(int i, int n_mar, int n_gen, int curpos, int *cross_scheme, do
 
   errortol = error_prob;
   if(curpos > 0) errortol = TOL;
-  for(v=0; v<n_gen; v++) //initf here is init_bcsftb; emitf is emit_bcsftb.
+  for(v=0; v<n_gen; v++) { //initf here is init_bcsftb; emitf is emit_bcsftb.
     alpha[v][0] = initf(v+1, cross_scheme) + emitf(Geno[0][i], v+1, errortol, cross_scheme);
+    sprintf(verboseString, "alpha[%d][0] = %f\n", v, alpha[v][0]);
+    Rprintf(verboseString);
+  }
   if(curpos == 0) errortol = TOL;
 
   for(j=1; j<n_mar; j++) {
@@ -135,7 +139,7 @@ void backward_prob(int i, int n_mar, int n_gen, int curpos, int *cross_scheme, d
 		   double initf(int, int *), 
 		   double emitf(int, int, double, int *))
 {
-	  Rprintf("Starting backward_prob()\n");
+  Rprintf("Starting backward_prob()\n");
   /* backward equations */
 
   /* Note: true genotypes coded as 1, 2, ...

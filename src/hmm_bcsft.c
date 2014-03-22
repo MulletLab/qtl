@@ -1457,8 +1457,8 @@ void prob_ft(double rf, int t, double *transpr)
   //transpr[8] = (-t1 * M_LN2)*(2*h);                             /* Aa */
   //transpr[7] = log1p(-exp(transpr[8])) - M_LN2;         /* AA */
   //transpr[9] = transpr[7];                              /* aa */
-  transpr[8] = 0.0;                             /* Aa */
-  transpr[7] = 0.0;         /* AA */
+  transpr[8] = 1000.0;                             /* Aa */
+  transpr[7] = 100.0;         /* AA */
   transpr[9] = transpr[7];                              /* aa */
 
   return;

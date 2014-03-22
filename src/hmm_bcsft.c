@@ -1431,14 +1431,16 @@ void prob_ft(double rf, int t, double *transpr)
   hetExpPr[5] = B_11;
   hetExpPr[6] = B_12;
 
+  
   for (i=0; i <= 6; i++) {
 	  transpr[i] = hetExpPr[i];
+	  Rprintf(" transpr[%d] is %f\t", i, transpr[i]);
 	  //if (transpr[i] != hetExpPr[i]) {
 		  //sprintf(text, "%s%f\t%f\t%s\t%d\t%s\t%f\n", "Not equal: ", transpr[i], hetExpPr[i], " i is:", i, "r is: ", r);
 		  //Rprintf(text); 
 	 // }
   }
-
+  Rprintf("\n");
   //sprintf(text, "%s\t%f\t%f\t%f\n", "Marginal probabilities 7, 8, 9: ", transpr[7], transpr[8], transpr[9]);
   //Rprintf(text);
 

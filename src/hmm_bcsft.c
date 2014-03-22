@@ -1442,12 +1442,12 @@ void prob_ft(double rf, int t, double *transpr)
   //Rprintf(text);
 
   /* marginal probabilities for one marker */
-  transpr[7] = transpr[0] + transpr[1] + transpr[2];
-  transpr[7] = log(transpr[7]);
-  transpr[9] = transpr[7];
+  //transpr[7] = transpr[0] + transpr[1] + transpr[2];
+  //transpr[7] = log(transpr[7]);
+  //transpr[9] = transpr[7];
 
-  transpr[8] = transpr[1] + transpr[3] + transpr[4] + transpr[1];
-  transpr[8] = log(transpr[8]);
+  //transpr[8] = transpr[1] + transpr[3] + transpr[4] + transpr[1];
+  //transpr[8] = log(transpr[8]);
   
   //transpr[8] = log(pow(h, t1));                              /* Aa */
   //transpr[7] = log((1 - pow(h, t1))/2);   /* AA */
@@ -1457,9 +1457,9 @@ void prob_ft(double rf, int t, double *transpr)
   //transpr[8] = (-t1 * M_LN2)*(2*h);                             /* Aa */
   //transpr[7] = log1p(-exp(transpr[8])) - M_LN2;         /* AA */
   //transpr[9] = transpr[7];                              /* aa */
-  //transpr[8] = 0.0;                             /* Aa */
-  //transpr[7] = 0.0;         /* AA */
-  //transpr[9] = transpr[7];                              /* aa */
+  transpr[8] = 0.0;                             /* Aa */
+  transpr[7] = 0.0;         /* AA */
+  transpr[9] = transpr[7];                              /* aa */
 
   return;
 }

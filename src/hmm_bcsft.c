@@ -1106,7 +1106,7 @@ void est_rf_bcsft(int *n_ind, int *n_mar, int *geno, double *rf,
 	next_rf = golden_search(countmat, n_gen, *maxit, *tol, cross_scheme,
 				 comploglik_bcsft);
 
-	Rprintf("after golden search, next_rf is:\t%f", next_rf);
+	//Rprintf("after golden search, next_rf is:\t%f", next_rf);
 	if(next_rf < 0.0) {
 	  flag = 0;
 	  next_rf = - next_rf;
@@ -1431,7 +1431,7 @@ void prob_ft(double rf, int t, double *transpr)
   hetExpPr[5] = B_11;
   hetExpPr[6] = B_12;
 
-  
+  Rprintf("For r of %f: ", rf);
   for (i=0; i <= 6; i++) {
 	  transpr[i] = hetExpPr[i];
 	  Rprintf(" transpr[%d] is %f\t", i, transpr[i]);

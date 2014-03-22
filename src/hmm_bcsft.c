@@ -1375,11 +1375,11 @@ void prob_ft(double rf, int t, double *transpr)
   //double h = 0.6059627021;
   //double h = 0.50;
   //double h = 0.6812920691;
-  //double h = 0.5574255561;
+  double h = 0.55;
   //double h = 0.7023121919;
   //double h = 0.60;
   //double h = 0.70;
-  double h = 0.40;
+  //double h = 0.40;
   double u;
   double hpowt;
   double r3, r4, r5, u2, u3, u4, d2;

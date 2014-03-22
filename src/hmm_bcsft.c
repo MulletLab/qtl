@@ -1106,6 +1106,7 @@ void est_rf_bcsft(int *n_ind, int *n_mar, int *geno, double *rf,
 	next_rf = golden_search(countmat, n_gen, *maxit, *tol, cross_scheme,
 				 comploglik_bcsft);
 
+	Rprintf("after golden search, next_rf is:\t%f", next_rf);
 	if(next_rf < 0.0) {
 	  flag = 0;
 	  next_rf = - next_rf;
@@ -1442,12 +1443,12 @@ void prob_ft(double rf, int t, double *transpr)
   //Rprintf(text);
 
   /* marginal probabilities for one marker */
-  //transpr[7] = transpr[0] + transpr[1] + transpr[2];
-  //transpr[7] = log(transpr[7]);
-  //transpr[9] = transpr[7];
+  transpr[7] = transpr[0] + transpr[1] + transpr[2];
+  transpr[7] = log(transpr[7]);
+  transpr[9] = transpr[7];
 
-  //transpr[8] = transpr[1] + transpr[3] + transpr[4] + transpr[1];
-  //transpr[8] = log(transpr[8]);
+  transpr[8] = transpr[1] + transpr[3] + transpr[4] + transpr[1];
+  transpr[8] = log(transpr[8]);
   
   //transpr[8] = log(pow(h, t1));                              /* Aa */
   //transpr[7] = log((1 - pow(h, t1))/2);   /* AA */
@@ -1457,9 +1458,9 @@ void prob_ft(double rf, int t, double *transpr)
   //transpr[8] = (-t1 * M_LN2)*(2*h);                             /* Aa */
   //transpr[7] = log1p(-exp(transpr[8])) - M_LN2;         /* AA */
   //transpr[9] = transpr[7];                              /* aa */
-  transpr[8] = 1000.0;                             /* Aa */
-  transpr[7] = 100.0;         /* AA */
-  transpr[9] = transpr[7];                              /* aa */
+  //transpr[8] = 1000.0;                             /* Aa */
+  //transpr[7] = 100.0;         /* AA */
+  //transpr[9] = transpr[7];                              /* aa */
 
   return;
 }

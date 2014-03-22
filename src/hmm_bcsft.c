@@ -267,9 +267,9 @@ double step_bcsft(int gen1, int gen2, double rf, double junk, int *cross_scheme)
 
 double init_bcsftb(int true_gen, int *cross_scheme)
 {
-  char verboseString[100];
-  sprintf(verboseString, "Starting init_bcsftb() with true_gen of %d\n", true_gen);
-  Rprintf(verboseString);
+  //char verboseString[100];
+  //sprintf(verboseString, "Starting init_bcsftb() with true_gen of %d\n", true_gen);
+  //Rprintf(verboseString);
 
   static double init1 = 0;
   static double init2 = 0;

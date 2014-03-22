@@ -332,9 +332,9 @@ double emit_bcsftb(int obs_gen, int true_gen, double error_prob, int *cross_sche
 
 double step_bcsftb(int gen1, int gen2, double rf, double junk, int *cross_scheme)
 {
-  char verboseString[100];
-  sprintf(verboseString, "Starting step_bcsftb() with gen1 of %d, gen2 of %d, rf of %f, and TOL of: %f\n", gen1, gen2, rf, TOL);
-  Rprintf(verboseString);
+  //char verboseString[100];
+  //sprintf(verboseString, "Starting step_bcsftb() with gen1 of %d, gen2 of %d, rf of %f, and TOL of: %f\n", gen1, gen2, rf, TOL);
+  //Rprintf(verboseString);
 
   static double oldrf = -1.0;
   static double transpr[10];
@@ -656,8 +656,8 @@ void est_map_bcsft(int *n_ind, int *n_mar, int *geno, double *rf,
   sprintf(verboseString, "%s", "Starting est_map_bcsft()\n");
   Rprintf(verboseString);
 
-  //Rprintf("Values in original geno array:\t");
-  //printArrayInt(((*n_ind) * (*n_mar)), geno);
+  Rprintf("Values in original geno array:\t");
+  printArrayInt(((*n_ind) * (*n_mar)), geno);
 
   Rprintf("Values in original rf array:\t");
   printArrayDouble(*n_mar, rf);
@@ -694,8 +694,10 @@ void est_map_bcsft(int *n_ind, int *n_mar, int *geno, double *rf,
   allocate_dmatrix(*n_mar, 10, &countmat);
   allocate_dmatrix(*n_mar, 10, &probmat);
 
-  Rprintf("Values for Geno[0] (first marker) in reorgainzed **Geno:\t"); /* Geno should be Geno[mar][ind] */
-  printArrayInt(*n_ind, Geno[0]);
+  Rprintf("Values in Geno in reorgainzed **Geno:\t"); /* Geno should be Geno[mar][ind] */
+  for (i = 0; i < *n_mar; i++) {
+  	printArrayInt(*n_ind, Geno[i]);
+  }
 
   /* digits in verbose output */
   if(*verbose) {
@@ -783,6 +785,8 @@ void est_map_bcsft(int *n_ind, int *n_mar, int *geno, double *rf,
       if(rf[j] < *tol/1000.0) rf[j] = *tol/1000.0;
       else if(rf[j] > 0.5-*tol/1000.0) rf[j] = 0.5-*tol/1000.0;
     }
+    Rprintf("After golden search, rf now contains:\t");
+    printArrayDouble((*n_mar-1), rf);
 
     if(*verbose>1) {
       /* print estimates as we go along*/

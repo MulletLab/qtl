@@ -1390,7 +1390,7 @@ void prob_ft(double rf, int t, double *transpr)
 
   Rprintf("For r of %f: ", rf);
   for (i=0; i <= 6; i++) {
-	  transpr[i] = hetExpPr[i];
+	  //transpr[i] = hetExpPr[i];
 	  Rprintf(" transpr[%d] is %f\t", i, transpr[i]);
 	  //if (transpr[i] != hetExpPr[i]) {
 		  //sprintf(text, "%s%f\t%f\t%s\t%d\t%s\t%f\n", "Not equal: ", transpr[i], hetExpPr[i], " i is:", i, "r is: ", r);

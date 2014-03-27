@@ -1307,88 +1307,25 @@ void prob_bcs(double rf, int s, double *transpr)
 void prob_ft(double rf, int t, double *transpr)
 {
   int k;
-  double t1,t2,t1m2,w,w2,r2,rw;
-  double beta,gamma,beta1,sbeta1,sgamma1,SDt,SEt,sbetaBA,gamma1,beta2m1;
-  /* compute transition probabilities to leave double het states */
-  t1 = t - 1.0;
-  t2 = R_pow(2.0, t); /* 2^t */
-  t1m2 = 2.0 / t2;
-  w = 1.0 - rf;
-  w2 = w * w;
-  r2 = rf * rf;
-  rw = w * rf;
-
   for(k=0; k<10; k++)
     transpr[k] = 0.0;
-
-  /* A = prob go from AB.ab to AB.AB at step t */
-  /* D1 -> Dk or Ek -> Ak+1 -> At OR D1 -> Dk or Ek -> Bk+1 -> Ak+s -> At */
-  beta = (w2 + r2) / 2.0; 
-  gamma = (w2 - r2) / 2.0; 
-  beta1 = R_pow(beta, t1);
-  gamma1 = R_pow((w2 - r2) / 2.0, t1);
-  /* beta1 = prob still in D or E at step t */
-  /* sbeta1 = sum of beta1[k] from 1 to t-1 */
-  /* Dt and Et depend on sbeta1 and sgamma1 */
-  sbeta1 = (1.0 - beta1) / (1.0 - beta);
-  sgamma1 = (1.0 - R_pow(gamma, t1)) / (1.0 - gamma);
-  SDt = (sbeta1 + sgamma1) / 8.0;
-  SEt = (sbeta1 - sgamma1) / 8.0;
-  beta2m1 = 1.0 - 2.0 * beta;
-
-  /* old code--make sure new code works first */
-  /* w2pr2 = (w2 + r2); */
-  /* sbetaBA = (rw / 2.0) * (sbeta1 - 2.0 * ((2.0 / t2) - beta1) / (1.0 - 2.0 * beta)); */
-  /* transpr[1] = (2.0 * rw / t2) * ((1.0 - R_pow(w2pr2, t1)) / (1 - w2pr2)); */
-
-  double s2beta1,sbeta2,s2beta2;
-  s2beta1 = (t1m2 - beta1) / beta2m1;                   /* sum from 1 to t-1 of of (2*beta)^(k-1). */
-  transpr[1] = rw * s2beta1;                            /* PfB1 = PfDB */
-  transpr[6] = transpr[1];                              /* PfB0 = PfB1 */
-
-  /* sbetaBA = sum beta1[k] * rw/2 * prob(B->A in remaining steps) */
-  sbeta2 = 0.0;
-  if(t > 2.0) sbeta2 = (1.0 - beta1 / beta) / (1.0 - beta); /* sum of beta^(k-1) from 1 to (t-1) */
-  s2beta2 = (2.0 * t1m2 - (beta1 / beta)) / beta2m1;        /* sum of (2*beta)^(k-1) from 1 to t-2 */
-  sbetaBA = 0.5 * rw * (sbeta2 - s2beta2);
-
-  transpr[0] = SDt * w2 + SEt * r2 + sbetaBA;           /* PfA1 = PfDA + PfDEA + PfDBA */
-  transpr[5] = transpr[0];                              /* PfA0 = PfA1 */
-
-  transpr[2] = SDt * r2 + SEt * w2 + sbetaBA;           /* PfbC = PfDC + PfDEC + PfDBC */
-  transpr[3] = (beta1 + gamma1) / 2.0;                  /* PfD = PfDD */
-  transpr[4] = (beta1 - gamma1) / 2.0;                  /* PfE = PfDE */
-
-  /* marginal probabilities for one marker */
-  transpr[8] = -t1 * M_LN2;                             /* Aa */
-  transpr[7] = log1p(-exp(transpr[8])) - M_LN2;         /* AA */
-  transpr[9] = transpr[7];                              /* aa */
-
-/*  
- *
- *
- *   */
+    
   double r = rf;
   double B_11, B_12, B_14, B_22, B_23;
-  double d;
+  double u, d;
   //double h = 0.719685673;  //e^(ln(percentage)/(t-1));
   //double h = 0.6059627021;
   //double h = 0.50;
+  double h = 0.7;
   //double h = 0.6812920691;
-  double h = 0.501;
+  //double h = 0.5574255561;
   //double h = 0.7023121919;
-  //double h = 0.60;
-  //double h = 0.70;
-  //double h = 0.40;
-  double u;
-  double hpowt;
-  double r3, r4, r5, u2, u3, u4, d2;
-  int i;
-  double hetExpPr[10];
-  char text[200];
 
-  for(k=0; k<10; k++)
-    hetExpPr[k] = 0.0;
+  double hpowt, h2;
+  double r2, r3, r4, r5, u2, u3, u4, d2;
+  int i;
+  char text[200];
+    
   r = rf;
   if ((r > 0.4999999) && (r < 0.5000001)) {
 	  r = 0.4999999;
@@ -1398,39 +1335,58 @@ void prob_ft(double rf, int t, double *transpr)
 	  r = 0.0000001;
   }
 
-  u=(2.0*h)/(2.0-2.0*h);
+  //u=(2.0*h)/(2.0-2.0*h);
 
-  hpowt = R_pow(h, t);
-  r2 = R_pow(r, 2.0);
-  r3 = R_pow(r, 3.0);
-  r4 = R_pow(r, 4.0);
-  r5 = R_pow(r, 5.0);
+  hpowt = pow(h, t);
+  h2 = pow(h, 2.0);
 
-  u2 = R_pow(u, 2.0);
-  u3 = R_pow(u, 3.0);
-  u4 = R_pow(u, 4.0);
+  r2 = pow(r, 2.0);
+  r3 = pow(r, 3.0);
+  r4 = pow(r, 4.0);
+  r5 = pow(r, 5.0);
 
-  d=2.0*(R_pow((1.0-r),2))+8.0*u*r*(1-r)+ 2.0*(r2)+ 2.0*(u2)*((R_pow((1.0-r),2.0))+(r2));
+  u =  -(2.0*h*r - r + sqrt((r2 - 2.0*h*r + h)*(2.0*h*r - 2.0*r - h + r2 + 1.0)) - 2.0*h*r2 + r2)/(h + 2.0*r - 2.0*h*r + 2.0*h*r2 - 2.0*r2 - 1.0);
 
-  d2 = R_pow(d, 2.0);
+  u2 = pow(u, 2.0);
+  u3 = pow(u, 3.0);
+  u4 = pow(u, 4.0);
 
-  B_11 = (1.0/2.0)*((4.0*r4*u2)/(d2 - 4.0*d*r2*u2 + 8.0*d*r*u2 - 4.0*d*u2 - 16.0*r3*u4 + 24.0*r2*u4 - 16.0*r*u4 + 4.0*u4) - (8.0*(h/2.0 - 1.0/2.0)*(- u*r2 + u*r))/(d - 4.0*r2*u2 - d*h + 2.0*h*u2 + 4.0*r*u2 - 2.0*u2 - 4.0*h*r*u2 + 4.0*h*r2*u2) + (2.0*R_pow((r - 1.0),2.0)*(- 2.0*r2*u2 + 4.0*r*u2 - 2.0*u2 + d))/(d2 - 4.0*d*r2*u2 + 8.0*d*r*u2 - 4.0*d*u2 - 16.0*r3*u4 + 24.0*r2*u4 - 16.0*r*u4 + 4.0*u4) + (4.0*hpowt*(- u*r2 + u*r))/(h*(4.0*r2*u2 - 4.0*r*u2 + 2.0*u2 - d*h)) - (d*R_pow((-(2.0*u2*(2.0*r - 1.0))/d),t))/(2.0*u2*(d + 4.0*r*u2 - 2.0*u2)) - (d*R_pow(((2.0*u2*(2.0*r2 - 2.0*r + 1.0))/d),t)*(16.0*r2*u2 - 16.0*r3*u2 + 8.0*r4*u2 - d*h - 8.0*r*u2 + 2.0*u2 - 4.0*d*r2*u + 2.0*d*h*r + 4.0*d*r*u - 2.0*d*h*r2 - 4.0*d*h*r*u + 4.0*d*h*r2*u))/(2.0*(- 4.0*r2*u2 + 4.0*r*u2 - 2.0*u2 + d)*(8.0*r4*u4 - 16.0*r3*u4 + 16.0*r2*u4 - 2.0*d*h*r2*u2 - 8.0*r*u4 + 2.0*d*h*r*u2 + 2.0*u4 - d*h*u2)));
+  d = 2.0*(pow((1.0-r),2))+8.0*u*r*(1-r)+ 2.0*(r2)+ 2.0*(u2)*((pow((1.0-r),2.0))+(r2));
 
-  B_12 = (-1.0/4.0)*((8.0*hpowt*(- u*r2 + u*r))/(h*(4.0*r2*u2 - 4.0*r*u2 + 2.0*u2 - d*h)) - (4.0*d*(- r2 + r)*R_pow(((4.0*r2*u2 - 4.0*r*u2 + 2*u2)/d),t))/((2.0*u*r2 - 2.0*u*r + u)*(4.0*r2*u2 - 4.0*r*u2 + 2.0*u2 - d*h)));
-	  
-  B_14 = (1.0/2.0)*((2.0*r2*(- 2.0*r2*u2 + 4.0*r*u2 - 2.0*u2 + d))/(d2 - 4.0*d*r2*u2 + 8.0*d*r*u2 - 4.0*d*u2 - 16.0*r3*u4 + 24.0*r2*u4 - 16.0*r*u4 + 4.0*u4) - (8.0*(h/2.0 - 1.0/2.0)*(- u*r2 + u*r))/(d - 4.0*r2*u2 - d*h + 2.0*h*u2 + 4.0*r*u2 - 2.0*u2 - 4.0*h*r*u2 + 4.0*h*r2*u2) + (4.0*hpowt*(- u*r2 + u*r))/(h*(4.0*r2*u2 - 4.0*r*u2 + 2.0*u2 - d*h)) + (d*R_pow((-(2.0*u2*(2.0*r - 1.0))/d),t))/(2.0*u2*(d + 4.0*r*u2 - 2.0*u2)) + (4.0*r2*u2*R_pow((r - 1.0),2.0))/(d2 - 4.0*d*r2*u2 + 8.0*d*r*u2 - 4.0*d*u2 - 16.0*r3*u4 + 24.0*r2*u4 - 16.0*r*u4 + 4.0*u4) - (d*R_pow(((2.0*u2*(2.0*r2 - 2.0*r + 1.0))/d),t)*(16.0*r2*u2 - 16.0*r3*u2 + 8.0*r4*u2 - d*h - 8.0*r*u2 + 2.0*u2 - 4.0*d*r2*u + 2.0*d*h*r + 4.0*d*r*u - 2.0*d*h*r2 - 4.0*d*h*r*u + 4.0*d*h*r2*u))/(2.0*(- 4.0*r2*u2 + 4.0*r*u2 - 2.0*u2 + d)*(8.0*r4*u4 - 16.0*r3*u4 + 16.0*r2*u4 - 2.0*d*h*r2*u2 - 8.0*r*u4 + 2.0*d*h*r*u2 + 2.0*u4 - d*h*u2)));
-
-  B_22 =(d*R_pow(((2.0*u2*(2.0*r2 - 2.0*r + 1.0))/d),t))/(4.0*(2.0*r2*u2 - 2.0*r*u2 + u2)) - (d*R_pow((-(2.0*u2*(2.0*r - 1.0))/d),t))/(4.0*u2*(2.0*r - 1.0));
-
-  B_23 =(d*R_pow(((2.0*u2*(2.0*r2 - 2.0*r + 1.0))/d),t))/(4.0*(2.0*r2*u2 - 2.0*r*u2 + u2)) + (d*R_pow((-(2.0*u2*(2.0*r - 1.0))/d),t))/(4.0*u2*(2.0*r - 1.0));
+  d2 = pow(d, 2.0);
   
-  hetExpPr[0] = B_11;
-  hetExpPr[1] = B_12;
-  hetExpPr[2] = B_14;
-  hetExpPr[3] = B_22;
-  hetExpPr[4] = B_23;
-  hetExpPr[5] = B_11;
-  hetExpPr[6] = B_12;
+  B_11 = (1.0/2.0)*((2.0*(- 8.0*r3*u3 + 8.0*r3*u2 + 12.0*r2*u3 - 12.0*r2*u2 - 2.0*d*r2*u + d*r2 - 4.0*r*u3 + 8.0*r*u2 + 2.0*d*r*u - 2.0*d*r - 2.0*u2 + d))/((d + 4.0*r*u2 - 2.0*u2)*(- 4.0*r2*u2 + 4.0*r*u2 - 2.0*u2 + d)) - (d*pow((-(4.0*r*u2 - 2.0*u2)/d),t))/(2.0*(d*u2 + 4.0*r*u4 - 2.0*u4)) + (4.0*hpowt*(- u*r2 + u*r))/(h*(4.0*r2*u2 - 4.0*r*u2 + 2.0*u2 - d*h)) + (d*pow(((4.0*r2*u2 - 4.0*r*u2 + 2.0*u2)/d),t)*(16.0*r2*u2 - 16.0*r3*u2 + 8.0*r4*u2 - d*h - 8.0*r*u2 + 2.0*u2 - 4.0*d*r2*u + 2.0*d*h*r + 4.0*d*r*u - 2.0*d*h*r2 - 4.0*d*h*r*u + 4.0*d*h*r2*u))/(2.0*(2.0*r2*u2 - 2.0*r*u2 + u2)*(32.0*r2*u4 - 32.0*r3*u4 + 16.0*r4*u4 + d2*h - 2.0*d*u2 - 16.0*r*u4 + 4.0*u4 + 4.0*d*r*u2 - 4.0*d*r2*u2 - 2.0*d*h*u2 + 4.0*d*h*r*u2 - 4.0*d*h*r2*u2)));
+  
+  B_14 = (1.0/2.0)*((d*pow((-(4.0*r*u2 - 2.0*u2)/d),t))/(2.0*(d*u2 + 4.0*r*u4 - 2.0*u4)) + (2.0*(- 8.0*r3*u3 + 12.0*r2*u3 - 2.0*d*r2*u + d*r2 - 4.0*r*u3 + 2.0*d*r*u))/((d + 4.0*r*u2 - 2.0*u2)*(- 4.0*r2*u2 + 4.0*r*u2 - 2.0*u2 + d)) + (4.0*hpowt*(- u*r2 + u*r))/(h*(4.0*r2*u2 - 4.0*r*u2 + 2.0*u2 - d*h)) + (d*pow(((4.0*r2*u2 - 4.0*r*u2 + 2.0*u2)/d),t)*(16.0*r2*u2 - 16.0*r3*u2 + 8.0*r4*u2 - d*h - 8.0*r*u2 + 2.0*u2 - 4.0*d*r2*u + 2.0*d*h*r + 4.0*d*r*u - 2.0*d*h*r2 - 4.0*d*h*r*u + 4.0*d*h*r2*u))/(2.0*(2.0*r2*u2 - 2.0*r*u2 + u2)*(32.0*r2*u4 - 32.0*r3*u4 + 16.0*r4*u4 + d2*h - 2.0*d*u2 - 16.0*r*u4 + 4.0*u4 + 4.0*d*r*u2 - 4.0*d*r2*u2 - 2.0*d*h*u2 + 4.0*d*h*r*u2 - 4.0*d*h*r2*u2)));
+
+  B_12 = (1.0/4.0)*((4.0*d*(- r2 + r)*pow(((4.0*r2*u2 - 4.0*r*u2 + 2.0*u2)/d),t))/((2.0*u*r2 - 2.0*u*r + u)*(4.0*r2*u2 - 4.0*r*u2 + 2.0*u2 - d*h)) - (8.0*hpowt*(- u*r2 + u*r))/(h*(4.0*r2*u2 - 4.0*r*u2 + 2.0*u2 - d*h)));
+  
+  B_22 = (d*pow(((4.0*r2*u2 - 4.0*r*u2 + 2.0*u2)/d),t))/(4.0*(2.0*r2*u2 - 2.0*r*u2 + u2)) - (d*pow((-(4.0*r*u2 - 2.0*u2)/d),t))/(4.0*(2.0*r*u2 - u2));
+  
+  B_23 = (d*pow(((4.0*r2*u2 - 4.0*r*u2 + 2.0*u2)/d),t))/(4.0*(2.0*r2*u2 - 2.0*r*u2 + u2)) + (d*pow((-(4.0*r*u2 - 2.0*u2)/d),t))/(4.0*(2.0*r*u2 - u2));
+
+  transpr[0] = B_11;   /* AABB */
+  transpr[1] = B_12;   /* AABb aaBb*/
+  transpr[2] = B_14;   /* AAbb */
+  transpr[3] = B_22;   /* AaBb */
+  transpr[4] = B_23;   /* AabB */
+  transpr[5] = B_11;   /* aabb */
+  transpr[6] = B_12;   /* AaBB Aabb*/
+  
+
+  //sprintf(text, "%s\t%f\t%f\t%f\n", "Marginal probabilities 7, 8, 9: ", transpr[7], transpr[8], transpr[9]);
+  //Rprintf(text);
+  /* marginal probabilities for a single marker from the joint probability function*/
+  //transpr[7] = transpr[0] + transpr[1] + transpr[2];    /* AA */
+  //transpr[7] = log(transpr[7]);				 
+  //transpr[9] = transpr[7];				/* aa */
+
+  //transpr[8] = transpr[1] + transpr[3] + transpr[4] + transpr[1];
+  //transpr[8] = log(transpr[8]);				/* Aa */
+ /* marginal probabilities for a single marker from the joint probability function*/
+  transpr[7] = log((1.0-pow(0.5,(t-1.0)))/2.0);    		/* AA */
+  transpr[9] = transpr[7];				/* aa */
+  transpr[8] = log((pow(0.5,(t-1.0))));  			/* Aa */
 
   Rprintf("For r of %f: ", rf);
   for (i=0; i <= 6; i++) {
@@ -1461,10 +1417,9 @@ void prob_ft(double rf, int t, double *transpr)
   //transpr[8] = (-t1 * M_LN2)*(2*h);                             /* Aa */
   //transpr[7] = log1p(-exp(transpr[8])) - M_LN2;         /* AA */
   //transpr[9] = transpr[7];                              /* aa */
-  transpr[8] = 1000.0;                             /* Aa */
-  transpr[7] = 100.0;         /* AA */
-  transpr[9] = transpr[7];                              /* aa */
-
+  //transpr[8] = 1000.0;                             /* Aa */
+  //transpr[7] = 100.0;         /* AA */
+  //transpr[9] = transpr[7];                              /* aa */
   return;
 }
 void prob_bcsft(double rf, int s, int t, double *transpr)

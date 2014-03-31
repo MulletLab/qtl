@@ -3039,6 +3039,7 @@ function()
 locateXO <-
 function(cross, chr, full.info=FALSE)
 {
+  warning("This function has been modified to not reject bcsft crosses; it may not be working propery for bcsft crosses")
   if(!missing(chr)) {
     cross <- subset(cross, chr=chr)
     if(nchr(cross) != 1)
@@ -3061,7 +3062,7 @@ function(cross, chr, full.info=FALSE)
   geno[is.na(geno)] <- 0
   type <- class(cross)[1]
 
-  if(type != "bc" && type != "f2" && type != "riself" && type != "risib" && type!="dh" && type!="haploid")
+  if(type != "bcsft" && type != "bc" && type != "f2" && type != "riself" && type != "risib" && type!="dh" && type!="haploid")
     stop("locateXO only working for backcross, intercross or RI strains.")
 
   map <- cross$geno[[1]]$map
@@ -3069,7 +3070,7 @@ function(cross, chr, full.info=FALSE)
 #  map <- map - map[1] # shift first marker to 0
 
   # bc or intercross?  thetype==0 for BC and ==1 for intercross
-  if(type=="f2") {
+  if(type=="f2" || type=="bcsft") {
     if(class(geno) == "X") thetype <- 0
     else thetype <- 1
   }

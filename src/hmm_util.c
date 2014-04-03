@@ -444,8 +444,8 @@ double golden_search_exHet(double *countmat, int n_gen, int maxit, double tol, i
     		}
   	}
   	/* handle boundary situations cleanly */
-  	if((x[0] == 0.0 && y[0] >= y[1]) || (x[2] == 0.0 && y[2] >= y[1])) return(0.0);
-  	if((x[0] == 1.0 && y[0] >= y[1]) || (x[2] == 1.0 && y[2] >= y[1])) return(1.0);
+  	if((x[0] == 0.0 && y[0] >= y[1]) || (x[2] == 0.0 && y[2] >= y[1])) fprintf(outFile, "%f\n", 0.0); //return(0.0);
+  	if((x[0] == 1.0 && y[0] >= y[1]) || (x[2] == 1.0 && y[2] >= y[1])) fprintf(outFile, "%f\n", 1.0); //return(1.0);
 
   	x[1] = (x[2] + x[0]) / 2.0;
   	/* make negative if does not converge */

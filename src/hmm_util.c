@@ -319,8 +319,8 @@ double golden_search_exHet(double *countmat, int n_gen, int maxit, double tol, i
 
   printArrayDouble(15, countmat);
 
-  //rf = 0.1;
-  //generateCountmat(countmat, rf, cross_scheme);
+  rf = 0.1;
+  generateCountmat(countmat, rf, cross_scheme);
   
   printArrayDouble(15, countmat);
 

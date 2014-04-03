@@ -291,7 +291,7 @@ void generateCountmat(double *countmat, double r, int *cross_scheme) {
 	double transpr[10];
 	double *het;
 	*het = 0.75;
-	prob_ft_exHet(r, cross_scheme[1], transpr, het);
+	prob_bcsft_exHet(r, cross_scheme[0], cross_scheme[1], transpr, het);
 	
 	countmat[0] = transpr[0] * 1000.0;
 	countmat[1] = transpr[1] * 1000.0 * 2.0;

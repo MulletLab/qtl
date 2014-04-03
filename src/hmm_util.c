@@ -294,14 +294,14 @@ void generateCountmat(double *countmat, double r, int *cross_scheme) {
 	*het = 0.75;
 	Rprintf("Within generate countmat\n");
 	
-	prob_bcsft_exHet(r, cross_scheme[0], cross_scheme[1], transpr, het);
+	//prob_bcsft_exHet(r, cross_scheme[0], cross_scheme[1], transpr, het);
 	
-	//countmat[0] = transpr[0] * 1000.0;
-	//countmat[1] = transpr[1] * 1000.0 * 2.0;
-	//countmat[2] = transpr[3] * 1000.0 + transpr[4] * 1000.0;
-	//countmat[3] = transpr[2] * 1000.0;
-	//countmat[4] = transpr[6] * 1000.0;
-	//countmat[5] = transpr[5] * 1000.0;
+	countmat[0] = 100; //transpr[0] * 1000.0;
+	countmat[1] = 100; //transpr[1] * 1000.0 * 2.0;
+	countmat[2] = 100;  //transpr[3] * 1000.0 + transpr[4] * 1000.0;
+	countmat[3] = 100; //transpr[2] * 1000.0;
+	countmat[4] = 100; //transpr[6] * 1000.0;
+	countmat[5] = 100; //transpr[5] * 1000.0;
 	
 }
 

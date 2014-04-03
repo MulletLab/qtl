@@ -286,7 +286,22 @@ double golden_search(double *countmat, int n_gen, int maxit, double tol, int *cr
     x[1] = - x[1];
   return(x[1]);
 }
- 
+
+void generateCountmat(double *countmat, double r, int *cross_scheme) {
+	double transpr[10];
+	double *het;
+	*het = 0.75;
+	prob_ft_exHet(r, cross_scheme[1], transpr, het);
+	
+	countmat[0] = transpr[0] * 1000.0;
+	countmat[1] = transpr[1] * 1000.0 * 2.0;
+	countmat[2] = transpr[3] * 1000.0 + transpr[4] * 1000.0;
+	countmat[3] = transpr[2] * 1000.0;
+	countmat[4] = transpr[6] * 1000.0;
+	countmat[5] = transpr[5] * 1000.0;
+	
+}
+
 double golden_search_exHet(double *countmat, int n_gen, int maxit, double tol, int *cross_scheme,
 	      double comploglik(double, int, double *, int *, double *), double *het, FILE *outFile)
 {
@@ -301,132 +316,8 @@ double golden_search_exHet(double *countmat, int n_gen, int maxit, double tol, i
 
   printArrayDouble(15, countmat);
 
-  // 1:2:1, t=2 r = 0.1
-
-  countmat[0] = 202.5;
-  countmat[1] = 90;
-  countmat[2] = 410;
-  countmat[3] = 5;
-  countmat[4] = 90;
-  countmat[5] = 202.5;
-
-  //Excess heterozygosity, h = 0.75, r = 0.1
-  countmat[0] = 86.2601;
-  countmat[1] = 75.3498;
-  countmat[2] = 674.65044;
-  countmat[3] = 2.12988;
-  countmat[4] = 75.3498;
-  countmat[5] = 86.2601;
-
-  //1:2:1 t=8 r=0.1
-  //
-  //Excess heterozygosity t=8, h=0.75, r = 0.1
-  //
-  countmat[0] = 317.118;
-  countmat[1] = 69.8702;
-  countmat[2] = 63.61365;
-  countmat[3] = 162.4108;
-  countmat[4] = 69.8702;
-  countmat[5] = 317.118;
-
-  //Excess heterozygosity t=3, h=0.75, r = 0.1
-  //
-  countmat[0] = 153.173;
-  countmat[1] = 107.3472;
-  countmat[2] = 455.1529;
-  countmat[3] = 23.8062;
-  countmat[4] = 107.3472;
-  countmat[5] = 153.173;
-
-  //Excess heterozygosity t=4, h=0.75, r = 0.1
-  //
-  countmat[0] = 204.919;
-  countmat[1] = 114.806;
-  countmat[2] = 307.0685;
-  countmat[3] = 53.4808;
-  countmat[4] = 114.806;
-  countmat[5] = 204.919;
-
-  //Excess heterozygosity t=5, h=0.75, r = 0.1
-  //
-  countmat[0] = 244.824;
-  countmat[1] = 109.2422;
-  countmat[2] = 207.16382;
-  countmat[3] = 84.7042;
-  countmat[4] = 109.2422;
-  countmat[5] = 244.824;
-
-  //Excess heterozygosity t=6, h=0.75, r = 0.1
-  //
-  countmat[0] = 275.519;
-  countmat[1] = 97.5414;
-  countmat[2] = 139.76345;
-  countmat[3] = 114.116;
-  countmat[4] = 97.5414;
-  countmat[5] = 275.519;
-
-  //Excess heterozygosity t=7, h=0.75, r = 0.1
-  //
-  countmat[0] = 299.076;
-  countmat[1] = 83.6872;
-  countmat[2] = 94.2913;
-  countmat[3] = 140.182;
-  countmat[4] = 83.6872;
-  countmat[5] = 299.076;
-  
-  //Excess heterozygosity t=7, h=0.75, r = 0.1
-  //
-  countmat[0] = 299.076;
-  countmat[1] = 83.6872;
-  countmat[2] = 94.2913;
-  countmat[3] = 140.182;
-  countmat[4] = 83.6872;
-  countmat[5] = 299.076;
-  
-  //Excess heterozygosity t=7, h=0.75, r = 0.01
-  //
-  countmat[0] = 397.122;
-  countmat[1] = 11.82784;
-  countmat[2] = 166.150652;
-  countmat[3] = 15.94934;
-  countmat[4] = 11.82784;
-  countmat[5] = 397.122;
-  
-  //Excess heterozygosity t=3, h=0.75, r = 0.01
-  //
-  countmat[0] = 211.277;
-  countmat[1] = 12.7473;
-  countmat[2] = 549.75316;
-  countmat[3] = 2.19788;
-  countmat[4] = 12.7473;
-  countmat[5] = 211.277;
- 
-  //Excess heterozygosity t=3, h=0.75, r = 0.001
-  //
-  countmat[0] = 217.993;
-  countmat[1] = 1.29659;
-  countmat[2] = 561.2031247;
-  countmat[3] = 0.216846;
-  countmat[4] = 1.29659;
-  countmat[5] = 217.993;
-  
-  //Excess heterozygosity t=3, h=0.75, r = 0.25
-  //
-  countmat[0] = 89.3508;
-  countmat[1] = 200.538;
-  countmat[2] = 361.9633;
-  countmat[3] = 58.2612;
-  countmat[4] = 200.538;
-  countmat[5] = 89.3508;
-  
-  //Excess heterozygosity t=7, h=0.75, r = 0.05
-  //
-  countmat[0] = 348.016;
-  countmat[1] = 50.3906;
-  countmat[2] = 127.58772;
-  countmat[3] = 75.5984;
-  countmat[4] = 50.3906;
-  countmat[5] = 348.016;
+  rf = 0.1;
+  generateCountmat(countmat, rf, cross_scheme);
   
   printArrayDouble(15, countmat);
 

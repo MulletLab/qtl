@@ -288,24 +288,90 @@ double golden_search(double *countmat, int n_gen, int maxit, double tol, int *cr
   return(x[1]);
 }
 
-void generateCountmat(double *countmat, double r, int *cross_scheme) {
+void generateCountmat(double *countmat, double rf, int t, double *het) {
 	double transpr[10];
-	int k;
-	for(k=0; k<10; k++)
-    		transpr[k] = 0.0;
-	double *het;
-	*het = 0.75;
 	Rprintf("Within generate countmat\n");
 	
-	prob_bcsft_exHet(r, cross_scheme[0], cross_scheme[1], transpr, het);
+  int k;
+  for(k=0; k<10; k++)
+    transpr[k] = 0.0;
+    
+  double r = rf;
+  double B_11, B_12, B_14, B_22, B_23;
+  double u, d;
+  double h = *het;
+
+  double hpowt, h2;
+  double r2, r3, r4, r5, u2, u3, u4, d2;
+  int i;
+  char text[200];
+    
+  r = rf;
+  if ((r > 0.4999999) && (r < 0.5000001)) {
+	  r = 0.4999999;
+  }
+
+  if (r < 0.0000001) {
+	  r = 0.0000001;
+  }
+
+  //u=(2.0*h)/(2.0-2.0*h);
+
+  hpowt = pow(h, t);
+  h2 = pow(h, 2.0);
+
+  r2 = pow(r, 2.0);
+  r3 = pow(r, 3.0);
+  r4 = pow(r, 4.0);
+  r5 = pow(r, 5.0);
+
+  u =  -(2.0*h*r - r + sqrt((r2 - 2.0*h*r + h)*(2.0*h*r - 2.0*r - h + r2 + 1.0)) - 2.0*h*r2 + r2)/(h + 2.0*r - 2.0*h*r + 2.0*h*r2 - 2.0*r2 - 1.0);
+
+  u2 = pow(u, 2.0);
+  u3 = pow(u, 3.0);
+  u4 = pow(u, 4.0);
+
+  d = 2.0*(pow((1.0-r),2))+8.0*u*r*(1-r)+ 2.0*(r2)+ 2.0*(u2)*((pow((1.0-r),2.0))+(r2));
+
+  d2 = pow(d, 2.0);
+  
+  B_11 = (1.0/2.0)*((2.0*(- 8.0*r3*u3 + 8.0*r3*u2 + 12.0*r2*u3 - 12.0*r2*u2 - 2.0*d*r2*u + d*r2 - 4.0*r*u3 + 8.0*r*u2 + 2.0*d*r*u - 2.0*d*r - 2.0*u2 + d))/((d + 4.0*r*u2 - 2.0*u2)*(- 4.0*r2*u2 + 4.0*r*u2 - 2.0*u2 + d)) - (d*pow((-(4.0*r*u2 - 2.0*u2)/d),t))/(2.0*(d*u2 + 4.0*r*u4 - 2.0*u4)) + (4.0*hpowt*(- u*r2 + u*r))/(h*(4.0*r2*u2 - 4.0*r*u2 + 2.0*u2 - d*h)) + (d*pow(((4.0*r2*u2 - 4.0*r*u2 + 2.0*u2)/d),t)*(16.0*r2*u2 - 16.0*r3*u2 + 8.0*r4*u2 - d*h - 8.0*r*u2 + 2.0*u2 - 4.0*d*r2*u + 2.0*d*h*r + 4.0*d*r*u - 2.0*d*h*r2 - 4.0*d*h*r*u + 4.0*d*h*r2*u))/(2.0*(2.0*r2*u2 - 2.0*r*u2 + u2)*(32.0*r2*u4 - 32.0*r3*u4 + 16.0*r4*u4 + d2*h - 2.0*d*u2 - 16.0*r*u4 + 4.0*u4 + 4.0*d*r*u2 - 4.0*d*r2*u2 - 2.0*d*h*u2 + 4.0*d*h*r*u2 - 4.0*d*h*r2*u2)));
+  
+  B_14 = (1.0/2.0)*((d*pow((-(4.0*r*u2 - 2.0*u2)/d),t))/(2.0*(d*u2 + 4.0*r*u4 - 2.0*u4)) + (2.0*(- 8.0*r3*u3 + 12.0*r2*u3 - 2.0*d*r2*u + d*r2 - 4.0*r*u3 + 2.0*d*r*u))/((d + 4.0*r*u2 - 2.0*u2)*(- 4.0*r2*u2 + 4.0*r*u2 - 2.0*u2 + d)) + (4.0*hpowt*(- u*r2 + u*r))/(h*(4.0*r2*u2 - 4.0*r*u2 + 2.0*u2 - d*h)) + (d*pow(((4.0*r2*u2 - 4.0*r*u2 + 2.0*u2)/d),t)*(16.0*r2*u2 - 16.0*r3*u2 + 8.0*r4*u2 - d*h - 8.0*r*u2 + 2.0*u2 - 4.0*d*r2*u + 2.0*d*h*r + 4.0*d*r*u - 2.0*d*h*r2 - 4.0*d*h*r*u + 4.0*d*h*r2*u))/(2.0*(2.0*r2*u2 - 2.0*r*u2 + u2)*(32.0*r2*u4 - 32.0*r3*u4 + 16.0*r4*u4 + d2*h - 2.0*d*u2 - 16.0*r*u4 + 4.0*u4 + 4.0*d*r*u2 - 4.0*d*r2*u2 - 2.0*d*h*u2 + 4.0*d*h*r*u2 - 4.0*d*h*r2*u2)));
+
+  B_12 = (1.0/4.0)*((4.0*d*(- r2 + r)*pow(((4.0*r2*u2 - 4.0*r*u2 + 2.0*u2)/d),t))/((2.0*u*r2 - 2.0*u*r + u)*(4.0*r2*u2 - 4.0*r*u2 + 2.0*u2 - d*h)) - (8.0*hpowt*(- u*r2 + u*r))/(h*(4.0*r2*u2 - 4.0*r*u2 + 2.0*u2 - d*h)));
+  
+  B_22 = (d*pow(((4.0*r2*u2 - 4.0*r*u2 + 2.0*u2)/d),t))/(4.0*(2.0*r2*u2 - 2.0*r*u2 + u2)) - (d*pow((-(4.0*r*u2 - 2.0*u2)/d),t))/(4.0*(2.0*r*u2 - u2));
+  
+  B_23 = (d*pow(((4.0*r2*u2 - 4.0*r*u2 + 2.0*u2)/d),t))/(4.0*(2.0*r2*u2 - 2.0*r*u2 + u2)) + (d*pow((-(4.0*r*u2 - 2.0*u2)/d),t))/(4.0*(2.0*r*u2 - u2));
+
+  transpr[0] = B_11;   /* AABB */
+  transpr[1] = B_12;   /* AABb aaBb*/
+  transpr[2] = B_14;   /* AAbb */
+  transpr[3] = B_22;   /* AaBb */
+  transpr[4] = B_23;   /* AabB */
+  transpr[5] = B_11;   /* aabb */
+  transpr[6] = B_12;   /* AaBB Aabb*/
+  
+
+  //sprintf(text, "%s\t%f\t%f\t%f\n", "Marginal probabilities 7, 8, 9: ", transpr[7], transpr[8], transpr[9]);
+  //Rprintf(text);
+  /* marginal probabilities for a single marker from the joint probability function*/
+  transpr[7] = transpr[0] + transpr[1] + transpr[2];    /* AA */
+  transpr[7] = log(transpr[7]);				 
+  transpr[9] = transpr[7];				/* aa */
+
+  transpr[8] = transpr[1] + transpr[3] + transpr[4] + transpr[1];
+  transpr[8] = log(transpr[8]);
 	
+		
 	countmat[0] = 100; //transpr[0] * 1000.0;
 	countmat[1] = 100; //transpr[1] * 1000.0 * 2.0;
 	countmat[2] = 100;  //transpr[3] * 1000.0 + transpr[4] * 1000.0;
 	countmat[3] = 100; //transpr[2] * 1000.0;
 	countmat[4] = 100; //transpr[6] * 1000.0;
 	countmat[5] = 100; //transpr[5] * 1000.0;
-	
+	return;
 }
 
 double golden_search_exHet(double *countmat, int n_gen, int maxit, double tol, int *cross_scheme,
@@ -323,7 +389,7 @@ double golden_search_exHet(double *countmat, int n_gen, int maxit, double tol, i
   printArrayDouble(15, countmat);
 
   rf = 0.1;
-  generateCountmat(countmat, rf, cross_scheme);
+  generateCountmat(countmat, rf, cross_scheme[1], het);
   
   printArrayDouble(15, countmat);
 

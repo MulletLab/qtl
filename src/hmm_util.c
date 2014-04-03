@@ -459,6 +459,6 @@ double golden_search_exHet(double *countmat, int n_gen, int maxit, double tol, i
   fprintf(outFile, "%f\n", x[1]);
   }
   return(x[1]);
-  	
+}
 
 /* end of hmm_util.c */

@@ -229,18 +229,9 @@ double golden_search(double *countmat, int n_gen, int maxit, double tol, int *cr
   static double resphi = 0.0;
   double x[4],y[4];
   int iter;
-  double rf;
-  char verboseString[100];
 
   if(resphi == 0.0)
     resphi = 1.5 - sqrt(5.0) / 2.0;
-  
-  printArrayDouble(15, countmat);
-
-  for (rf = 0; rf <= 0.5; rf = rf+0.1) {
-	  sprintf(verboseString, "%f\t%f\n", rf, comploglik(rf, n_gen, countmat, cross_scheme));
-	  Rprintf(verboseString);
-  }
   
   x[0] = 0.0;
   x[2] = 1.0;
@@ -305,6 +296,15 @@ double golden_search_exHet(double *countmat, int n_gen, int maxit, double tol, i
   static double resphi = 0.0;
   double x[4],y[4];
   int iter;
+  double rf;
+  char verboseString[100];
+
+  printArrayDouble(15, countmat);
+
+  for (rf = 0; rf <= 0.5; rf = rf+0.1) {
+	  sprintf(verboseString, "%f\t%f\n", rf, comploglik(rf, n_gen, countmat, cross_scheme));
+	  Rprintf(verboseString);
+  }
 
   if(resphi == 0.0)
     resphi = 1.5 - sqrt(5.0) / 2.0;

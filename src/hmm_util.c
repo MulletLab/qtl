@@ -230,6 +230,7 @@ double golden_search(double *countmat, int n_gen, int maxit, double tol, int *cr
   double x[4],y[4];
   int iter;
   double rf;
+  char verboseString[100];
 
   if(resphi == 0.0)
     resphi = 1.5 - sqrt(5.0) / 2.0;
@@ -237,7 +238,8 @@ double golden_search(double *countmat, int n_gen, int maxit, double tol, int *cr
   printArrayDouble(15, countmat);
 
   for (rf = 0; rf <= 0.5; rf = rf+0.1) {
-	  Rprintf(comploglik(rf, n_gen, countmat, cross_scheme));
+	  sprintf(verboseString, "%f\t%f\n", rf, comploglik(rf, n_gen, countmat, cross_scheme));
+	  Rprintf(verboseString);
   }
   
   x[0] = 0.0;

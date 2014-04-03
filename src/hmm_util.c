@@ -290,11 +290,14 @@ double golden_search(double *countmat, int n_gen, int maxit, double tol, int *cr
 
 void generateCountmat(double *countmat, double r, int *cross_scheme) {
 	double transpr[10];
+	int k;
+	for(k=0; k<10; k++)
+    		transpr[k] = 0.0;
 	double *het;
 	*het = 0.75;
 	Rprintf("Within generate countmat\n");
 	
-	//prob_bcsft_exHet(r, cross_scheme[0], cross_scheme[1], transpr, het);
+	prob_bcsft_exHet(r, cross_scheme[0], cross_scheme[1], transpr, het);
 	
 	countmat[0] = 100; //transpr[0] * 1000.0;
 	countmat[1] = 100; //transpr[1] * 1000.0 * 2.0;

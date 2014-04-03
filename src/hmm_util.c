@@ -301,13 +301,23 @@ double golden_search_exHet(double *countmat, int n_gen, int maxit, double tol, i
 
   printArrayDouble(15, countmat);
 
+  // 1:2:1, r = 1.0
+
+  countmat[0] = 202.5;
+  countmat[1] = 90;
+  countmat[2] = 410;
+  countmat[3] = 5;
+  countmat[4] = 90;
+  countmat[5] = 202.5;
+
+/*  
   countmat[0] = 100;
   countmat[1] = 100;
   countmat[2] = 100;
   countmat[3] = 100;
   countmat[4] = 100;
   countmat[5] = 100;
-
+*/
   printArrayDouble(15, countmat);
 
   for (rf = 0; rf <= 0.5; rf = rf+0.001) {

@@ -386,7 +386,7 @@ double golden_search_exHet(double *countmat, int n_gen, int maxit, double tol, i
   double rf;
   double *pfixedHet;
   double fixedHet;
-  fixedHet = 0.75;
+  fixedHet = 0.68;
   pfixedHet = &fixedHet;
   char verboseString[100];
 

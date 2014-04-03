@@ -229,10 +229,17 @@ double golden_search(double *countmat, int n_gen, int maxit, double tol, int *cr
   static double resphi = 0.0;
   double x[4],y[4];
   int iter;
+  double rf;
 
   if(resphi == 0.0)
     resphi = 1.5 - sqrt(5.0) / 2.0;
+  
+  printArrayDouble(15, countmat);
 
+  for (rf = 0; rf <= 0.5; rf = rf+0.1) {
+	  Rprintf(comploglik(rf, n_gen, countmat, cross_scheme));
+  }
+  
   x[0] = 0.0;
   x[2] = 1.0;
   y[0] = comploglik(0.0, n_gen, countmat, cross_scheme);

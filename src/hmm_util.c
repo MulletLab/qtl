@@ -374,6 +374,24 @@ double golden_search_exHet(double *countmat, int n_gen, int maxit, double tol, i
   countmat[4] = 83.6872;
   countmat[5] = 299.076;
   
+  //Excess heterozygosity t=7, h=0.75, r = 0.1
+  //
+  countmat[0] = 299.076;
+  countmat[1] = 83.6872;
+  countmat[2] = 94.2913;
+  countmat[3] = 140.182;
+  countmat[4] = 83.6872;
+  countmat[5] = 299.076;
+  
+  //Excess heterozygosity t=7, h=0.75, r = 0.01
+  //
+  countmat[0] = 397.122;
+  countmat[1] = 11.82784;
+  countmat[2] = 166.150652;
+  countmat[3] = 15.94934;
+  countmat[4] = 11.82784;
+  countmat[5] = 397.122;
+ 
   printArrayDouble(15, countmat);
 
   for (rf = 0; rf <= 0.5; rf = rf+0.001) {

@@ -368,8 +368,8 @@ void generateCountmat(double *countmat, double rf, int t, double *het) {
 	countmat[0] = transpr[0] * 1000.0;
 	countmat[1] = transpr[1] * 1000.0 * 2.0;
 	countmat[2] = transpr[3] * 1000.0 + transpr[4] * 1000.0;
-	countmat[3] = transpr[2] * 1000.0;
-	countmat[4] = transpr[6] * 1000.0;
+	countmat[3] = transpr[2] * 1000.0 * 2.0;
+	countmat[4] = transpr[6] * 1000.0 * 2.0;
 	countmat[5] = transpr[5] * 1000.0;
 	return;
 }

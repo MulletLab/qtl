@@ -1075,8 +1075,10 @@ void est_map_bcsft_exHet(int *n_ind, int *n_mar, int *geno, double *rf,
       /* *** USING tol IN TWO DISTINCT WAYS CAUSES PROBLEMS *** */
       /* add tol[1] in est.map to fix this */
       /* golden section search for MLE of recombination rate */
-      rf[j] = golden_search_exHet(countmat[j], n_gen, *maxit, tol[1], cross_scheme,
-			     comploglik_bcsft_exHet, het);
+      //rf[j] = golden_search_exHet(countmat[j], n_gen, *maxit, tol[1], cross_scheme,
+			     //comploglik_bcsft_exHet, het);  //This doesn't work in this verbose branch right now due to no file to write to.
+      rf[j] = golden_search(countmat[j], n_gen, *maxit, tol[1], cross_scheme,
+			     comploglik_bcsft);
 
       if(rf[j] < *tol/1000.0) rf[j] = *tol/1000.0;
       else if(rf[j] > 0.5-*tol/1000.0) rf[j] = 0.5-*tol/1000.0;

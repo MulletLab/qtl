@@ -1559,6 +1559,11 @@ void est_rf_bcsft_exHet(int *n_ind, int *n_mar, int *geno, double *rf,
   warning("This is BCsFt code modified by RFM and SKT, the passable heterozygosity version; this is in development, and should not be used for general purposes");
   warning("Using a heterozygosity value of %f", *het);
 
+  FILE *outputFile = fopen("rf_by_loglik.txt");
+  if (outputFile == NULL) {
+	  Rprintf("Unable to open file\n");
+  }
+
   /* cross_scheme is hidden in rf */
   cross_scheme[0] = rf[0];
   cross_scheme[1] = rf[1];
@@ -1642,7 +1647,7 @@ void est_rf_bcsft_exHet(int *n_ind, int *n_mar, int *geno, double *rf,
 
 	/* use golden section search of log likelihood instead of EM */
 	next_rf = golden_search_exHet(countmat, n_gen, *maxit, *tol, cross_scheme,
-				 comploglik_bcsft_exHet, het);   //TODO: Add exHet function here.
+				 comploglik_bcsft_exHet, het, outputFile);   //TODO: Add exHet function here.
 
 	if(next_rf < 0.0) {
 	  flag = 0;

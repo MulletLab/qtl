@@ -1544,7 +1544,6 @@ void est_rf_bcsft(int *n_ind, int *n_mar, int *geno, double *rf,
       }
     } /* end loops over markers */
   }
-  fclose(outputFile);
 }
 
 void est_rf_bcsft_exHet(int *n_ind, int *n_mar, int *geno, double *rf, 
@@ -1679,6 +1678,7 @@ void est_rf_bcsft_exHet(int *n_ind, int *n_mar, int *geno, double *rf,
       }
     } /* end loops over markers */
   }
+  fclose(outputFile);
 }
 
 void calc_pairprobo_bcsft(int *n_ind, int *n_mar, int *geno, 

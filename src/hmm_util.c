@@ -303,6 +303,8 @@ double golden_search_exHet(double *countmat, int n_gen, int maxit, double tol, i
 
   for (rf = 0; rf <= 0.5; rf = rf+0.1) {
 	  fprintf(outFile, "%f\t%f\n", rf, comploglik(rf, n_gen, countmat, cross_scheme, het));
+	  sprintf(verboseString, "%f\t%f\n", rf, comploglik(rf, n_gen, countmat, cross_scheme, het));
+	  Rprintf(verboseString);
   }
 
   if(resphi == 0.0)

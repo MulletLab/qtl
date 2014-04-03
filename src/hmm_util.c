@@ -396,67 +396,62 @@ double golden_search_exHet(double *countmat, int n_gen, int maxit, double tol, i
   	generateCountmat(countmat, rf, cross_scheme[1], pfixedHet);
   	fprintf(outFile, "%f\t", rf);
 
-  //for (rf = 0; rf <= 0.5; rf = rf+0.001) {
-	  //fprintf(outFile, "%f\t%f\n", rf, comploglik(rf, n_gen, countmat, cross_scheme, het));
-	  //sprintf(verboseString, "%f\t%f\n", rf, comploglik(rf, n_gen, countmat, cross_scheme, het));
-	  //Rprintf(verboseString);
-  //}
+  	if(resphi == 0.0)
+    		resphi = 1.5 - sqrt(5.0) / 2.0;
 
-  if(resphi == 0.0)
-    resphi = 1.5 - sqrt(5.0) / 2.0;
+  	x[0] = 0.0;
+  	x[2] = 1.0;
+  	y[0] = comploglik(0.0, n_gen, countmat, cross_scheme, het);
+  	y[2] = comploglik(0.5, n_gen, countmat, cross_scheme, het);
 
-  x[0] = 0.0;
-  x[2] = 1.0;
-  y[0] = comploglik(0.0, n_gen, countmat, cross_scheme, het);
-  y[2] = comploglik(0.5, n_gen, countmat, cross_scheme, het);
-
-  if(y[2] < y[0]) {
-    x[1] = x[0];
-    x[0] = x[2];
-    x[2] = x[1];
-    y[1] = y[0];
-    y[0] = y[2];
-    y[2] = y[1];
-  }
+  	if(y[2] < y[0]) {
+    		x[1] = x[0];
+    		x[0] = x[2];
+    		x[2] = x[1];
+    		y[1] = y[0];
+    		y[0] = y[2];
+    		y[2] = y[1];
+  	}
   
-  x[1] = x[0] + resphi * (x[2] - x[0]);
-  y[1] = comploglik(x[1], n_gen, countmat, cross_scheme, het);
+  	x[1] = x[0] + resphi * (x[2] - x[0]);
+  	y[1] = comploglik(x[1], n_gen, countmat, cross_scheme, het);
 
-  /* x0 and x2 are the current bounds; the minimum is between them.
-   * x1 is the center point, which is closer to x0 than to x2. */
+  	/* x0 and x2 are the current bounds; the minimum is between them.
+   	* x1 is the center point, which is closer to x0 than to x2. */
 
-  for(iter=0; iter<maxit; iter++) {
-    /* Create a new possible center in the area between x1 and x2, closer to x1. */
-    x[3] = x[1] + resphi * (x[2] - x[1]);
+  	for(iter=0; iter<maxit; iter++) {
+    		/* Create a new possible center in the area between x1 and x2, closer to x1. */
+    		x[3] = x[1] + resphi * (x[2] - x[1]);
 
-    /* Evaluate termination criterion */
-    if(fabs(x[2] - x[0]) < tol)
-      break;
+    		/* Evaluate termination criterion */
+    		if(fabs(x[2] - x[0]) < tol)
+      			break;
  
-    y[3] = comploglik(x[3], n_gen, countmat, cross_scheme, het);
+    		y[3] = comploglik(x[3], n_gen, countmat, cross_scheme, het);
 
-    if(y[3] >= y[1]) {
-      x[0] = x[1];
-      x[1] = x[3];
-      y[0] = y[1];
-      y[1] = y[3];
-    }
-    else {
-      x[2] = x[0];
-      x[0] = x[3];
-      y[2] = y[0];
-      y[0] = y[3];
-    }
-  }
-  /* handle boundary situations cleanly */
-  if((x[0] == 0.0 && y[0] >= y[1]) || (x[2] == 0.0 && y[2] >= y[1])) return(0.0);
-  if((x[0] == 1.0 && y[0] >= y[1]) || (x[2] == 1.0 && y[2] >= y[1])) return(1.0);
+    		if(y[3] >= y[1]) {
+      			x[0] = x[1];
+      			x[1] = x[3];
+      			y[0] = y[1];
+      			y[1] = y[3];
+    		}
+    		else {
+      			x[2] = x[0];
+      			x[0] = x[3];
+      			y[2] = y[0];
+      			y[0] = y[3];
+    		}
+  	}
+  	/* handle boundary situations cleanly */
+  	if((x[0] == 0.0 && y[0] >= y[1]) || (x[2] == 0.0 && y[2] >= y[1])) return(0.0);
+  	if((x[0] == 1.0 && y[0] >= y[1]) || (x[2] == 1.0 && y[2] >= y[1])) return(1.0);
 
-  x[1] = (x[2] + x[0]) / 2.0;
-  /* make negative if does not converge */
-  if(iter >= maxit)
-    x[1] = - x[1];
-  fprintf(outFile, "%f\n", x[1]);
+  	x[1] = (x[2] + x[0]) / 2.0;
+  	/* make negative if does not converge */
+  	if(iter >= maxit)
+    		x[1] = - x[1];
+    		
+  	fprintf(outFile, "%f\n", x[1]);
   }
   return(x[1]);
 }

@@ -384,6 +384,8 @@ double golden_search_exHet(double *countmat, int n_gen, int maxit, double tol, i
   double x[4],y[4];
   int iter;
   double rf;
+  double *fixedHet;
+  *fixedHet = 0.75;
   char verboseString[100];
 
   printArrayDouble(15, countmat);

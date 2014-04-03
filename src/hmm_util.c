@@ -34,6 +34,7 @@
 #include <R_ext/PrtUtil.h>
 #include "hmm_main.h"
 #include "util.h"
+#include "hmm_bcsft.h"
 
 
 void printArrayDouble(int numIndices, double *array) {

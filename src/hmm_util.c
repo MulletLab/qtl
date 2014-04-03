@@ -392,10 +392,9 @@ double golden_search_exHet(double *countmat, int n_gen, int maxit, double tol, i
 
   printArrayDouble(15, countmat);
 
-  for (rf = 0; rf <= 0.5; rf = rf+0.1) {
+  for (rf = 0; rf <= 0.5; rf = rf+0.001) {
   	generateCountmat(countmat, rf, cross_scheme[1], pfixedHet);
   	fprintf(outFile, "%f\t", rf);
-  	 printArrayDouble(15, countmat);
 
   	if(resphi == 0.0)
     		resphi = 1.5 - sqrt(5.0) / 2.0;

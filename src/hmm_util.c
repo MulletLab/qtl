@@ -288,7 +288,7 @@ double golden_search(double *countmat, int n_gen, int maxit, double tol, int *cr
 }
  
 double golden_search_exHet(double *countmat, int n_gen, int maxit, double tol, int *cross_scheme,
-	      double comploglik(double, int, double *, int *, double *), double *het, FILE outFile)
+	      double comploglik(double, int, double *, int *, double *), double *het, FILE *outFile)
 {
   /* Golden section search. */
   /* en.wikipedia.org/wiki/Golden_section_search */

@@ -394,10 +394,7 @@ double golden_search_exHet(double *countmat, int n_gen, int maxit, double tol, i
 
   for (rf = 0; rf <= 0.5; rf = rf+0.001) {
   	generateCountmat(countmat, rf, cross_scheme[1], pfixedHet);
-  	fprintf(outFile, "%f\t%f\n", rf, comploglik(rf, n_gen, countmat, cross_scheme, het));
-  }
-  
-  printArrayDouble(15, countmat);
+  	fprintf(outFile, "%f\t", rf);
 
   //for (rf = 0; rf <= 0.5; rf = rf+0.001) {
 	  //fprintf(outFile, "%f\t%f\n", rf, comploglik(rf, n_gen, countmat, cross_scheme, het));
@@ -459,7 +456,9 @@ double golden_search_exHet(double *countmat, int n_gen, int maxit, double tol, i
   /* make negative if does not converge */
   if(iter >= maxit)
     x[1] = - x[1];
+  fprintf(outFile, "%f\n", x[1]);
+  }
   return(x[1]);
-}
+  	
 
 /* end of hmm_util.c */

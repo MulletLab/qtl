@@ -70,9 +70,15 @@ double errorlod_bcsft(int obs, double *prob, double error_prob);
 double nrec2_bcsft(int obs1, int obs2, double rf, int *cross_scheme);
 
 double logprec_bcsft(int obs1, int obs2, double rf, int *cross_scheme);
+double logprec_bcsft_exHet(int obs1, int obs2, double rf, int *cross_scheme, double *het);
+void prob_bcsft_exHet(double rf, int s, int t, double *transpr, double *het);
+double comploglik_bcsft_exHet(double rf, int n_gen, double *countmat, int *cross_scheme, double *het);
 
 void est_rf_bcsft(int *n_ind, int *n_mar, int *geno, double *rf, 
 	       int *maxit, double *tol);
+void est_rf_bcsft_exHet(int *n_ind, int *n_mar, int *geno, double *rf, 
+	       int *maxit, double *tol, double *het);
+
 
 void calc_pairprob_bcsft(int *n_ind, int *n_mar, int *geno, 
 		      double *rf, double *error_prob, double *genoprob,

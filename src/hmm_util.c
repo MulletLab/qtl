@@ -302,7 +302,7 @@ double golden_search_exHet(double *countmat, int n_gen, int maxit, double tol, i
   printArrayDouble(15, countmat);
 
   for (rf = 0; rf <= 0.5; rf = rf+0.1) {
-	  sprintf(verboseString, "%f\t%f\n", rf, comploglik(rf, n_gen, countmat, cross_scheme));
+	  sprintf(verboseString, "%f\t%f\n", rf, comploglik(rf, n_gen, countmat, cross_scheme, het));
 	  Rprintf(verboseString);
   }
 

@@ -1559,7 +1559,7 @@ void est_rf_bcsft_exHet(int *n_ind, int *n_mar, int *geno, double *rf,
   warning("This is BCsFt code modified by RFM and SKT, the passable heterozygosity version; this is in development, and should not be used for general purposes");
   warning("Using a heterozygosity value of %f", *het);
 
-  FILE *outputFile = fopen("rf_by_loglik.txt");
+  FILE *outputFile = fopen("rf_by_loglik.txt", "w");
   if (outputFile == NULL) {
 	  Rprintf("Unable to open file\n");
   }

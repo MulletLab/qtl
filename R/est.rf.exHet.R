@@ -36,8 +36,12 @@
 est.rf.exHet <-
 function(cross, maxit=10000, tol=1e-6, het=0.5) 
 {
-  print("This code is in development by RFM and SKT, and should not be used for general purposes")
-
+  print("This is a modified version of est.rf() to account for differential viability of heterozygotes.")
+  type <- class(cross)[1]
+  if(type != "bcsft")
+    stop("est.rf.exHet is currently only applicable to BC0, Ft crosses.")
+    
+    
   if(!any(class(cross) == "cross"))
     stop("Input should have class \"cross\".")
 
@@ -45,8 +49,7 @@ function(cross, maxit=10000, tol=1e-6, het=0.5)
   n.mar <- totmar(cross)
   n.ind <- nind(cross)
   mar.names <- unlist(lapply(cross$geno,function(a) colnames(a$data)))
-  
-  type <- class(cross)[1]
+ 
   chrtype <- sapply(cross$geno,class)
 
   is.bcsft <- (type == "bcsft")
@@ -85,7 +88,7 @@ function(cross, maxit=10000, tol=1e-6, het=0.5)
   else if(type=="ri8sib" || type=="ri8self" || type=="ri4sib" || type=="ri4self") {
     cfunc <- paste("est_rf_", type, sep="")
     if(any(chrtype == "X"))
-      warning("est.rf not working properly for the X chromosome for 4- or 8-way RIL.")
+      warning("est.rf.exHet not working properly for the X chromosome for 4- or 8-way RIL.")
   }
   else if(type == "bcsft")
     cfunc <- "est_rf_bcsft_exHet"

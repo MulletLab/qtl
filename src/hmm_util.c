@@ -365,13 +365,13 @@ void generateCountmat(double *countmat, double rf, int t, double *het) {
   transpr[8] = log(transpr[8]);
 	
 		
-	countmat[0] = transpr[0] * 1000.0;
-	countmat[1] = transpr[1] * 1000.0 * 2.0;
-	countmat[2] = transpr[3] * 1000.0 + transpr[4] * 1000.0;
-	countmat[3] = transpr[2] * 1000.0 * 2.0;
-	countmat[4] = transpr[6] * 1000.0 * 2.0;
-	countmat[5] = transpr[5] * 1000.0;
-	return;
+  countmat[0] = transpr[0] * 1000.0;
+  countmat[1] = transpr[1] * 1000.0 * 2.0;
+  countmat[2] = transpr[3] * 1000.0 + transpr[4] * 1000.0;
+  /countmat[3] = transpr[2] * 1000.0 * 2.0;
+  countmat[4] = transpr[6] * 1000.0 * 2.0;
+  countmat[5] = transpr[5] * 1000.0;
+  return;
 }
 
 double golden_search_exHet(double *countmat, int n_gen, int maxit, double tol, int *cross_scheme,
@@ -379,7 +379,7 @@ double golden_search_exHet(double *countmat, int n_gen, int maxit, double tol, i
 {
   /* Golden section search. */
   /* en.wikipedia.org/wiki/Golden_section_search */
-
+  warning("This is golden search is only meant for making a plot. This will not work for general purposes (it doesn't even use the input marker data).\n");
   static double resphi = 0.0;
   double x[4],y[4];
   int iter;

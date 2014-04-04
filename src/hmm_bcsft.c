@@ -4,9 +4,10 @@
  * 
  * copyright (c) 2001-9, Karl W Broman
  * modified from hmm_f2.c by Brian S Yandell and Laura M Shannon (c) 2010
- *
+ * modified by Ryan McCormick in 2014
+ * 
  * modified Jun, 2010
- * last modified Apr, 2009
+ * last modified Apr, 2014 by Ryan McCormick
  * first written Feb, 2001
  *
  *     This program is free software; you can redistribute it and/or
@@ -25,6 +26,7 @@
  *
  * Contains: init_bcsft, emit_bcsft, step_bcsft, init_bcsftb, emit_bcsftb, step_bcsftb,
  *           calc_genoprob_bcsft, calc_genoprob_special_bcsft, sim_geno_bcsft, est_map_bcsft, 
+ * 	     est_map_bcsft_exHet, est_rf_bcsft_exHet, prob_ft_exHet, prob_bcsft_exHet
  *           argmax_geno_bcsft, errorlod_bcsft, calc_errorlod_bcsft, nrec2_bcsft,
  *           logprec_bcsft, est_rf_bcsft, calc_pairprob_bcsft, marker_loglik_bcsft
  *

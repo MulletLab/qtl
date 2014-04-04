@@ -1,9 +1,9 @@
 ######################################################################
 #
-# est.map.R
+# est.map.exHet.R
 #
-# copyright (c) 2001-2013, Karl W Broman
-# last modified Sep, 2013
+# copyright (c) 2001-2013, Karl W Broman; modified 2014 by Ryan McCormick
+# last modified April, 2014
 # first written Apr, 2001
 #
 #     This program is free software; you can redistribute it and/or
@@ -19,13 +19,13 @@
 #     at http://www.r-project.org/Licenses/GPL-3
 # 
 # Part of the R/qtl package
-# Contains: est.map
+# Contains: est.map.exHet
 #
 ######################################################################
 
 ######################################################################
 #
-# est.map: re-estimate the genetic map for an experimental cross
+# est.map.exHet: re-estimate the genetic map for an experimental cross
 #
 ######################################################################
 
@@ -34,8 +34,8 @@ function(cross, chr, error.prob=0.0001, map.function=c("haldane","kosambi","c-f"
          m=0, p=0, maxit=10000, tol=1e-6, sex.sp=TRUE, verbose=FALSE,
          omit.noninformative=TRUE, offset, n.cluster=1, het=0.5)
 {
-  print("This is BCsFt code modified by RFM and SKT; this is in development, and should not be used for general purposes")
-  print("Using a heterozygosity value ofL")
+  print("This is in development, and should not be used for general purposes")
+  print("Using a heterozygosity value of:")
   print(het)
 
   if(!("cross" %in% class(cross)))

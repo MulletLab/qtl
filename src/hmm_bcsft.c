@@ -1487,17 +1487,11 @@ void est_rf_bcsft(int *n_ind, int *n_mar, int *geno, double *rf,
 void est_rf_bcsft_exHet(int *n_ind, int *n_mar, int *geno, double *rf, 
 		  int *maxit, double *tol, double *het)
 {
-	/* TODO: Ultimately, it's the prob_ft() function within the prob_bcsft() function that needs to be modified.
-	 * prob_bcsft() is called by comploglik_bcsft(), which itself is passed to the golden_search() function.
-	 * prob_bcsft() is also called by logprec_bcsft().
-	 * an exHet form of comploglik_bcsft(), logprec_bcsft(), prob_bcsft(), and prob_ft() functions will need to be made
-	 * that pass the het term. */
 
   int i, j1, j2, **Geno, n_mei=0, flag=0;
   double **Rf, next_rf=0.0;
   int cross_scheme[2];
-  warning("This is BCsFt code modified by RFM and SKT, the passable heterozygosity version; this is in development, and should not be used for general purposes");
-  warning("Using a heterozygosity value of %f", *het);
+  warning("Calculating RFs using a heterozygosity value of %f", *het);
 
   /* cross_scheme is hidden in rf */
   cross_scheme[0] = rf[0];
@@ -1566,8 +1560,8 @@ void est_rf_bcsft_exHet(int *n_ind, int *n_mar, int *geno, double *rf,
 	for(obs1=1; obs1<=obs2; obs1++) {
 	  temp = countmat[obs1 + tmp1];
 	  if(temp > 0.0) {
-	    logprecval = logprec_bcsft_exHet(obs1, obs2, 0.5, cross_scheme, het) -   //TODO: Add exHet function here.
-	      logprec_bcsft_exHet(obs1, obs2, TOL, cross_scheme, het);   //TODO: Add exHet function here.
+	    logprecval = logprec_bcsft_exHet(obs1, obs2, 0.5, cross_scheme, het) -
+	      logprec_bcsft_exHet(obs1, obs2, TOL, cross_scheme, het);
 	    if(fabs(logprecval) > TOL) {
 	      n_mei += (int) temp;
 	      flag = 1;
@@ -1582,7 +1576,7 @@ void est_rf_bcsft_exHet(int *n_ind, int *n_mar, int *geno, double *rf,
 
 	/* use golden section search of log likelihood instead of EM */
 	next_rf = golden_search_exHet(countmat, n_gen, *maxit, *tol, cross_scheme,
-				 comploglik_bcsft_exHet, het);   //TODO: Add exHet function here.
+				 comploglik_bcsft_exHet, het);   
 
 	if(next_rf < 0.0) {
 	  flag = 0;
@@ -1599,8 +1593,8 @@ void est_rf_bcsft_exHet(int *n_ind, int *n_mar, int *geno, double *rf,
 	  for(obs1=1; obs1<=obs2; obs1++) {
 	    temp = countmat[obs1 + tmp1];
 	    if(temp > 0.0)
-	      logprecval += temp * (logprec_bcsft_exHet(obs1,obs2, next_rf, cross_scheme, het) -   //TODO:Add exHet function here.
-				    logprec_bcsft_exHet(obs1,obs2, 0.5, cross_scheme, het));   ///TODO: Add exHet function here.
+	      logprecval += temp * (logprec_bcsft_exHet(obs1,obs2, next_rf, cross_scheme, het) -
+				    logprec_bcsft_exHet(obs1,obs2, 0.5, cross_scheme, het));   
 	  }
 	}
 	Rf[j2][j1] = logprecval / log(10.0);

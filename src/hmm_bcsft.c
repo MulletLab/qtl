@@ -926,8 +926,10 @@ void est_map_bcsft_exHet(int *n_ind, int *n_mar, int *geno, double *rf,
   char pattern[100], text[200];
   int cross_scheme[2];
   double **countmat, **probmat;
-  warning("This is BCsFt code modified by RFM and SKT, the passable heterozygosity version (with new u and d); this is in development, and should not be used for general purposes");
+  
   warning("Using a heterozygosity value of %f", *het); 
+  error("The excess heterozygosity model is not yet implemented for the hidden markov model called by est.map(). Instead, use est.rf.exHet() to estimate recombination fractions and calculate the map on pairwise fractions"); ");
+  
   /* cross scheme hidden in loglik argument; used by hmm_bcsft */
   cross_scheme[0] = (int) ftrunc(*loglik / 1000.0);
   cross_scheme[1] = ((int) *loglik) - 1000 * cross_scheme[0];

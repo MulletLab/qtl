@@ -1,7 +1,7 @@
-\name{est.rf}
-\alias{est.rf}
+\name{est.rf.exHet}
+\alias{est.rf.exHet}
 
-\title{Estimate pairwise recombination fractions}
+\title{Estimate pairwise recombination fractions with a heterozygosity maintenance term}
 
 \description{
   Estimate the sex-averaged recombination fraction between all pairs of
@@ -9,7 +9,7 @@
 }
 
 \usage{
-est.rf(cross, maxit=10000, tol=1e-6)
+est.rf(cross, maxit=10000, tol=1e-6, het=0.5)
 }
 
 \arguments{
@@ -18,7 +18,8 @@ est.rf(cross, maxit=10000, tol=1e-6)
  \item{maxit}{Maximum number of iterations for the EM algorithm (not
    used with backcrosses).}
  \item{tol}{Tolerance for determining convergence (not used with
-   backcrosses).} 
+   backcrosses).}
+  \item{het}{Heterozygosity maintenance term; the amount of heterozygosity maintained each generation}
 }
 
 \value{

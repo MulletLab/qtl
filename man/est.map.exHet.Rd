@@ -28,7 +28,7 @@ est.map(cross, chr, error.prob=0.0001,
  \item{map.function}{Indicates whether to use the Haldane, Kosambi,
    Carter-Falconer, or Morgan map function when converting genetic
    distances into recombination fractions. (Ignored if m > 0.)}
- \item{het}{Heterozygosity maintenance term; the amount of heterozygosity maintained each generation
+ \item{het}{Heterozygosity maintenance term; the amount of heterozygosity maintained each generation}
  \item{m}{Interference parameter for the chi-square model for
    interference; a non-negative integer, with m=0 corresponding to no
    interference. This may be used only for a backcross or intercross.}

@@ -5,11 +5,11 @@
 
 \description{
   Estimate the sex-averaged recombination fraction between all pairs of
-  genetic markers.
+  genetic markers under regimes of heterozygosity maintained per generation other than h = 0.5
 }
 
 \usage{
-est.rf(cross, maxit=10000, tol=1e-6, het=0.5)
+est.rf(cross, maxit=10000, tol=1e-6, het=0.5, hetByLinkageGroup = FALSE)
 }
 
 \arguments{
@@ -20,6 +20,9 @@ est.rf(cross, maxit=10000, tol=1e-6, het=0.5)
  \item{tol}{Tolerance for determining convergence (not used with
    backcrosses).}
   \item{het}{Heterozygosity maintenance term; the amount of heterozygosity maintained each generation}
+  \item{hetByLinkageGroup}{Boolean that designates whether h (the heterozygosity maintenance term) will
+     be estimated on a per linkage group basis from the genotype data. Setting this to TRUE will override
+     the het argument.}
 }
 
 \value{

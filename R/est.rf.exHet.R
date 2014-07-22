@@ -3,7 +3,7 @@
 # est.rf.exHet.R
 #
 # copyright (c) 2001-2013, Karl W Broman; modified 2014 by Ryan McCormick
-# last modified April, 2014
+# last modified July, 2014
 # first written Apr, 2001
 #
 #     This program is free software; you can redistribute it and/or
@@ -26,7 +26,8 @@
 ######################################################################
 #
 # est.rf.exHet: Estimate sex-averaged recombination fractions between
-#         all pairs of markers
+#         all pairs of markers under regimes of heterozygosity
+#         maintained per generation other than h = 0.5
 #
 # mapFromRF: Use pairwise recombination fractions of adjacent markers
 #	to calculate a genetic map
@@ -34,7 +35,7 @@
 ######################################################################
 
 est.rf.exHet <-
-function(cross, maxit=10000, tol=1e-6, het=0.5) 
+function(cross, maxit=10000, tol=1e-6, het=0.5, hetByLinkageGroup = FALSE) 
 {
   print("This is a modified version of est.rf() to account for differential viability of heterozygotes.")
   type <- class(cross)[1]
@@ -105,23 +106,58 @@ function(cross, maxit=10000, tol=1e-6, het=0.5)
             rf = as.double(rep(0,n.mar*n.mar)),
             PACKAGE="qtl")
   else {
-    ## Hide cross scheme in genoprob to pass to routine. BY
-    temp <- as.double(rep(0,n.mar*n.mar))
-    if(type == "bcsft")
-      temp[1:2] <- cross.scheme
-    
-    z <- .C(cfunc,
-            as.integer(n.ind),         # number of individuals
-            as.integer(n.mar),         # number of markers
-            as.integer(Geno),
-            rf = as.double(temp),
-            as.integer(maxit),
-            as.double(tol),
-	    as.double(het),
-            PACKAGE="qtl")
+    RFmatrix <- NULL
+    if (hetByLinkageGroup == FALSE) {
+      ## Hide cross scheme in genoprob to pass to routine. BY
+      temp <- as.double(rep(0, n.mar * n.mar))
+      if (type == "bcsft") 
+        temp[1:2] <- cross.scheme
+      z <- .C(cfunc, as.integer(n.ind), as.integer(n.mar), 
+              as.integer(Geno), rf = as.double(temp), as.integer(maxit), 
+              as.double(tol), as.double(het), PACKAGE = "qtl")
+      RFmatrix <- matrix(z$rf, ncol = n.mar)
+    }
+    if (hetByLinkageGroup == TRUE) {
+      for (i in 1:n.chr) {
+        subMatrix <- NULL
+        n.mar <- (nmar(cross))[i]
+        temp <- as.double(rep(0, n.mar * n.mar))
+        if (type == "bcsft") 
+          temp[1:2] <- cross.scheme
+        Geno <- NULL
+        numHomo <- 0
+        numHet <- 0
+        totalGeno <- 0
+        Geno <- cross$geno[[i]]$data
+        for (j in Geno) {
+          if (j == 1 || j == 3) {
+            numHomo <- numHomo + 1
+            totalGeno <- totalGeno + 1
+          }
+          else if (j == 2) {
+            numHet = numHet + 1
+            totalGeno <- totalGeno + 1
+          }  
+        }
+        big_h <- numHet / totalGeno
+        littleH <- exp(log(big_h)/(temp[2]-1))
+        z <- .C(cfunc, as.integer(n.ind), as.integer(n.mar), 
+                as.integer(Geno), rf = as.double(temp), as.integer(maxit), 
+                as.double(tol), as.double(littleH), PACKAGE = "qtl")
+        subMatrix <- matrix(z$rf, ncol = n.mar)
+        if (i == 1) {
+          RFmatrix <- subMatrix
+        }
+        else {
+          RFmatrix <- rbind(cbind(RFmatrix, matrix(0, nrow=nrow(RFmatrix), ncol=ncol(subMatrix))),
+              cbind(matrix(0.5, nrow=nrow(subMatrix), ncol=ncol(RFmatrix)), subMatrix))
+        }    
+      } 
+    } #End if HetByLinkage = TRUE
   }
-
-  cross$rf <- matrix(z$rf,ncol=n.mar)
+  
+  cross$rf <- RFmatrix
+  
   dimnames(cross$rf) <- list(mar.names,mar.names)
 
   if(fixX) {

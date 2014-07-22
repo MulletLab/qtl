@@ -129,6 +129,7 @@ function(cross, maxit=10000, tol=1e-6, het=0.5, hetByLinkageGroup = FALSE)
         numHet <- 0
         totalGeno <- 0
         Geno <- cross$geno[[i]]$data
+        Geno[is.na(Geno)] <- 0
         for (j in Geno) {
           if (j == 1 || j == 3) {
             numHomo <- numHomo + 1
